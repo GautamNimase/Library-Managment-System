@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Library Management System</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/modern-dashboard.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+</head>
+<body class="modern-body">
+    <!-- User Sidebar -->
+    <aside class="user-sidebar" id="userSidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <div class="logo-icon">
+                <i class="fas fa-book"></i>
+                </div>
+                <span class="logo-text">LibraryMS</span>
+            </div>
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            </div>
+        
+        <nav class="sidebar-nav">
+            <ul class="nav-list">
+                <li class="nav-item active">
+                    <a href="#" class="nav-link" onclick="showUserDashboard()">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showUserBooks()">
+                        <i class="fas fa-book"></i>
+                        <span>Books</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showUserProfile()">
+                        <i class="fas fa-user"></i>
+                        <span>Profile</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showUserHistory()">
+                        <i class="fas fa-history"></i>
+                        <span>History</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showUserNotifications()">
+                        <i class="fas fa-bell"></i>
+                        <span>Notifications</span>
+                        <span class="notification-badge" id="sidebarNotificationCount">0</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-details">
+                    <span class="user-name" id="sidebarUserName">User</span>
+                    <span class="user-role">Library Member</span>
+                </div>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="main-content" id="mainContent">
+        <!-- Top Bar -->
+        <header class="top-bar">
+            <div class="top-bar-left">
+                <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="breadcrumb">
+                    <span class="breadcrumb-item" id="breadcrumbMain">LibraryMS</span>
+                    <i class="fas fa-chevron-right breadcrumb-separator"></i>
+                    <span class="breadcrumb-item active" id="breadcrumbCurrent">Dashboard</span>
+                </div>
+                <h1 class="page-title" id="pageTitle">Dashboard</h1>
+            </div>
+            
+            <div class="top-bar-center">
+                <div class="search-container">
+                    <div class="search-box">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="globalSearchInput" placeholder="Search books, authors, or topics..." onkeyup="performGlobalSearch(this.value)">
+                        <button class="search-clear" id="searchClear" onclick="clearGlobalSearch()" style="display: none;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="search-suggestions" id="searchSuggestions" style="display: none;">
+                        <!-- Search suggestions will appear here -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="top-bar-right">
+                <div class="top-bar-actions">
+                    <button class="action-btn" onclick="showUserBooks()" title="Browse Books">
+                        <i class="fas fa-book"></i>
+                    </button>
+                    <button class="action-btn" onclick="showUserProfile()" title="My Profile">
+                        <i class="fas fa-user"></i>
+                    </button>
+                    <button class="action-btn" onclick="showUserHistory()" title="Reading History">
+                        <i class="fas fa-history"></i>
+                    </button>
+                </div>
+                
+                <button class="notification-btn" onclick="showNotifications()">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge" id="topNotificationCount">3</span>
+                </button>
+                
+                <div class="user-menu">
+                    <button class="user-btn" onclick="toggleUserMenu()">
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="user-info">
+                            <span class="user-name" id="topUserName">User</span>
+                            <span class="user-role">Member</span>
+                        </div>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="user-dropdown" id="userDropdown" style="display: none;">
+                        <div class="dropdown-header">
+                            <div class="dropdown-user-info">
+                                <div class="dropdown-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="dropdown-details">
+                                    <span class="dropdown-name" id="dropdownUserName">User</span>
+                                    <span class="dropdown-email" id="dropdownUserEmail">user@example.com</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-menu">
+                            <a href="#" class="dropdown-item" onclick="showUserProfile()">
+                                <i class="fas fa-user"></i>
+                                <span>My Profile</span>
+                            </a>
+                            <a href="#" class="dropdown-item" onclick="showUserHistory()">
+                                <i class="fas fa-history"></i>
+                                <span>Reading History</span>
+                            </a>
+                            <a href="#" class="dropdown-item" onclick="showUserBooks()">
+                                <i class="fas fa-book"></i>
+                                <span>My Books</span>
+                            </a>
+                            <a href="#" class="dropdown-item" onclick="showNotifications()">
+                                <i class="fas fa-bell"></i>
+                                <span>Notifications</span>
+                                <span class="dropdown-badge" id="dropdownNotificationCount">3</span>
+                            </a>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-menu">
+                            <a href="#" class="dropdown-item" onclick="showSettings()">
+                                <i class="fas fa-cog"></i>
+                                <span>Settings</span>
+                            </a>
+                            <a href="#" class="dropdown-item" onclick="showHelp()">
+                                <i class="fas fa-question-circle"></i>
+                                <span>Help & Support</span>
+                            </a>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-menu">
+                            <a href="#" class="dropdown-item logout" onclick="logout()">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Logout</span>
+                            </a>
+                        </div>
+                    </div>
+            </div>
+        </div>
+        </header>
+
+        <!-- Content Sections -->
+        <div class="content-sections">
+            <!-- Dashboard Section -->
+            <section class="content-section active" id="dashboardSection">
+                <!-- Modern Dashboard Header -->
+                <div class="dashboard-hero">
+                    <div class="hero-background">
+                        <div class="hero-pattern"></div>
+                        <div class="floating-elements">
+                            <div class="floating-book book-1"><i class="fas fa-book"></i></div>
+                            <div class="floating-book book-2"><i class="fas fa-book-open"></i></div>
+                            <div class="floating-book book-3"><i class="fas fa-bookmark"></i></div>
+                            <div class="floating-star star-1"><i class="fas fa-star"></i></div>
+                            <div class="floating-star star-2"><i class="fas fa-star"></i></div>
+                        </div>
+                    </div>
+        <div class="container">
+                        <div class="hero-content animate__animated animate__fadeInUp">
+            <div class="welcome-section">
+                                <h1 class="welcome-title">
+                                    Welcome back, <span id="userName" class="user-name">User</span>!
+                                </h1>
+                                <p class="welcome-subtitle">Manage your library account and discover amazing books</p>
+                                <div class="welcome-actions">
+                                    <button class="btn-primary btn-glow" onclick="showQuickActions()">
+                                        <i class="fas fa-rocket"></i>
+                                        Quick Start
+                                    </button>
+                                    <button class="btn-secondary" onclick="showNotifications()">
+                                        <i class="fas fa-bell"></i>
+                                        Notifications
+                                        <span class="notification-badge" id="notificationCount">0</span>
+                                    </button>
+            </div>
+        </div>
+                            <div class="hero-stats">
+                                <div class="quick-stat">
+                            <div class="stat-icon">
+                                <i class="fas fa-book-open"></i>
+                            </div>
+                            <div class="stat-info">
+                                        <span class="stat-number" id="quickBorrowedBooks">0</span>
+                                        <span class="stat-label">Active Books</span>
+                            </div>
+                        </div>
+                                <div class="quick-stat">
+                            <div class="stat-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-info">
+                                        <span class="stat-number" id="quickDueBooks">0</span>
+                                        <span class="stat-label">Due Soon</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Content -->
+                <div class="dashboard-main">
+                    <div class="container">
+                        <!-- Stats Overview -->
+                        <div class="stats-overview animate__animated animate__fadeInUp" data-delay="200">
+                            <h2 class="section-title">
+                                <i class="fas fa-chart-line"></i>
+                                Your Library Overview
+                            </h2>
+                            <div class="stats-grid">
+                                <div class="stat-card stat-card-primary" data-animate="counter">
+                                    <div class="stat-card-bg"></div>
+                                    <div class="stat-icon">
+                                        <i class="fas fa-book-open"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <h3 id="borrowedBooks" class="stat-number">0</h3>
+                                        <p class="stat-label">Books Borrowed</p>
+                                        <div class="stat-trend">
+                                            <i class="fas fa-arrow-up"></i>
+                                            <span>+2 this week</span>
+                                        </div>
+                                    </div>
+                                    <div class="stat-chart">
+                                        <div class="mini-chart">
+                                            <div class="chart-bar" style="height: 60%"></div>
+                                            <div class="chart-bar" style="height: 80%"></div>
+                                            <div class="chart-bar" style="height: 40%"></div>
+                                            <div class="chart-bar" style="height: 90%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-card stat-card-warning" data-animate="counter">
+                                    <div class="stat-card-bg"></div>
+                                    <div class="stat-icon">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <h3 id="dueBooks" class="stat-number">0</h3>
+                                        <p class="stat-label">Due Soon</p>
+                                        <div class="stat-trend">
+                                            <i class="fas fa-exclamation"></i>
+                                            <span>Check dates</span>
+                                        </div>
+                                    </div>
+                                    <div class="stat-chart">
+                                        <div class="mini-chart">
+                                            <div class="chart-bar" style="height: 30%"></div>
+                                            <div class="chart-bar" style="height: 50%"></div>
+                                            <div class="chart-bar" style="height: 70%"></div>
+                                            <div class="chart-bar" style="height: 40%"></div>
+                                        </div>
+                            </div>
+                        </div>
+                                <div class="stat-card stat-card-success" data-animate="counter">
+                                    <div class="stat-card-bg"></div>
+                            <div class="stat-icon">
+                                <i class="fas fa-star"></i>
+                            </div>
+                                    <div class="stat-content">
+                                        <h3 id="reviewsGiven" class="stat-number">0</h3>
+                                        <p class="stat-label">Reviews Given</p>
+                                        <div class="stat-trend">
+                                            <i class="fas fa-arrow-up"></i>
+                                            <span>+1 this month</span>
+                                        </div>
+                                    </div>
+                                    <div class="stat-chart">
+                                        <div class="mini-chart">
+                                            <div class="chart-bar" style="height: 20%"></div>
+                                            <div class="chart-bar" style="height: 40%"></div>
+                                            <div class="chart-bar" style="height: 60%"></div>
+                                            <div class="chart-bar" style="height: 80%"></div>
+                                        </div>
+                            </div>
+                        </div>
+                                <div class="stat-card stat-card-danger" data-animate="counter">
+                                    <div class="stat-card-bg"></div>
+                            <div class="stat-icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                                    <div class="stat-content">
+                                        <h3 id="overdueBooks" class="stat-number">0</h3>
+                                        <p class="stat-label">Overdue</p>
+                                        <div class="stat-trend">
+                                            <i class="fas fa-arrow-down"></i>
+                                            <span>Return soon</span>
+                                        </div>
+                                    </div>
+                                    <div class="stat-chart">
+                                        <div class="mini-chart">
+                                            <div class="chart-bar" style="height: 10%"></div>
+                                            <div class="chart-bar" style="height: 5%"></div>
+                                            <div class="chart-bar" style="height: 15%"></div>
+                                            <div class="chart-bar" style="height: 8%"></div>
+                                        </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                        <!-- Main Dashboard Grid -->
+                        <div class="dashboard-grid">
+                            <!-- My Books Section -->
+                            <div class="dashboard-section books-section animate__animated animate__fadeInLeft" data-delay="400">
+                                <div class="section-header">
+                                    <h2 class="section-title">
+                                        <i class="fas fa-book"></i>
+                                        My Books
+                                    </h2>
+                                    <div class="section-actions">
+                                        <button class="btn-icon" onclick="refreshBooks()" title="Refresh">
+                                            <i class="fas fa-sync-alt"></i>
+                                        </button>
+                                        <button class="btn-icon" onclick="showUserBooks()" title="Browse More Books">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="books-list" id="issuesList">
+                        <div class="loading-state">
+                                        <div class="loading-spinner"></div>
+                            <p>Loading your books...</p>
+                        </div>
+                    </div>
+                </div>
+
+                            <!-- Quick Actions Section -->
+                            <div class="dashboard-section actions-section animate__animated animate__fadeInRight" data-delay="400">
+                                <div class="section-header">
+                                    <h2 class="section-title">
+                                        <i class="fas fa-bolt"></i>
+                                        Quick Actions
+                                    </h2>
+                                </div>
+                                <div class="action-grid">
+                                    <button class="action-card" data-action="browse" onclick="showUserBooks()">
+                                        <div class="action-icon">
+                                            <i class="fas fa-search"></i>
+                                        </div>
+                                        <h3>Browse Books</h3>
+                                        <p>Discover new titles</p>
+                                        <div class="action-arrow">
+                                            <i class="fas fa-arrow-right"></i>
+                                        </div>
+                                    </button>
+                                    <button class="action-card" data-action="profile" onclick="showUserProfile()">
+                                        <div class="action-icon">
+                                            <i class="fas fa-user-edit"></i>
+                                        </div>
+                                        <h3>Edit Profile</h3>
+                                        <p>Update your info</p>
+                                        <div class="action-arrow">
+                                            <i class="fas fa-arrow-right"></i>
+                                        </div>
+                                    </button>
+                                    <button class="action-card" data-action="notifications" onclick="showUserNotifications()">
+                                        <div class="action-icon">
+                                            <i class="fas fa-bell"></i>
+                                        </div>
+                                        <h3>Notifications</h3>
+                                        <p>Stay updated</p>
+                                        <div class="action-arrow">
+                                            <i class="fas fa-arrow-right"></i>
+                                        </div>
+                                    </button>
+                                    <button class="action-card" data-action="history" onclick="showUserHistory()">
+                                        <div class="action-icon">
+                                            <i class="fas fa-history"></i>
+                                        </div>
+                                        <h3>Reading History</h3>
+                                        <p>View past books</p>
+                                        <div class="action-arrow">
+                                            <i class="fas fa-arrow-right"></i>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Recent Activity Section -->
+                            <div class="dashboard-section activity-section animate__animated animate__fadeInUp" data-delay="600">
+                                <div class="section-header">
+                                    <h2 class="section-title">
+                                        <i class="fas fa-clock"></i>
+                                        Recent Activity
+                                    </h2>
+                                    <div class="section-actions">
+                                        <button class="btn-icon" onclick="refreshActivity()" title="Refresh">
+                                            <i class="fas fa-sync-alt"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="activity-timeline" id="activityTimeline">
+                                    <div class="activity-item">
+                                        <div class="activity-icon">
+                                            <i class="fas fa-book"></i>
+                                        </div>
+                                        <div class="activity-content">
+                                            <h4>Book Borrowed</h4>
+                                            <p>The Great Gatsby</p>
+                                            <span class="activity-time">2 hours ago</span>
+                                        </div>
+                                    </div>
+                                    <div class="activity-item">
+                                        <div class="activity-icon">
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <div class="activity-content">
+                                            <h4>Review Added</h4>
+                                            <p>1984 - 5 stars</p>
+                                            <span class="activity-time">1 day ago</span>
+                                        </div>
+                                    </div>
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                            <i class="fas fa-undo"></i>
+                            </div>
+                            <div class="activity-content">
+                                            <h4>Book Returned</h4>
+                                            <p>To Kill a Mockingbird</p>
+                                            <span class="activity-time">3 days ago</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- Books Section -->
+            <section class="content-section" id="booksSection">
+                <div class="page-content">
+                    <!-- Books Header -->
+                    <div class="books-header">
+                        <div class="container">
+                            <div class="header-content">
+                                <h1 class="page-title">Library Books</h1>
+                                <p class="page-subtitle">Browse and borrow books from our collection</p>
+                        </div>
+                    </div>
+                </div>
+
+                    <!-- Search and Filter -->
+                    <div class="search-filter-section">
+                        <div class="container">
+                            <div class="search-bar">
+                                <div class="search-input-group">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text" id="searchInput" placeholder="Search books, authors, or genres...">
+                                    <button class="search-btn" onclick="searchBooks()">
+                            <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="filter-buttons">
+                                <button class="filter-btn active" data-filter="all" onclick="filterBooks('all')">All</button>
+                                <button class="filter-btn" data-filter="fiction" onclick="filterBooks('fiction')">Fiction</button>
+                                <button class="filter-btn" data-filter="non-fiction" onclick="filterBooks('non-fiction')">Non-Fiction</button>
+                                <button class="filter-btn" data-filter="technology" onclick="filterBooks('technology')">Technology</button>
+                                <button class="filter-btn" data-filter="available" onclick="filterBooks('available')">Available</button>
+                            </div>
+                            <div class="sort-section">
+                                <label for="sortSelect">Sort by:</label>
+                                <select id="sortSelect" onchange="sortBooks(this.value)">
+                                    <option value="title">Title A-Z</option>
+                                    <option value="author">Author A-Z</option>
+                                    <option value="category">Category</option>
+                                    <option value="available">Availability</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Books Grid -->
+                    <div class="books-collection">
+                        <div class="container">
+                            <div class="books-grid" id="booksGrid">
+                                <!-- Books will be loaded here -->
+                                <div class="loading-state">
+                                    <div class="loading-spinner"></div>
+                                    <p>Loading books...</p>
+                                </div>
+                            </div>
+                            
+                            <div class="load-more-section">
+                                <button class="load-more-btn" onclick="loadMoreBooks()">
+                                    <i class="fas fa-plus"></i>
+                                    <span>Load More Books</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Profile Section -->
+            <section class="content-section" id="profileSection">
+                <div class="page-content">
+                    <div class="container">
+                        <div class="page-header">
+                            <h1 class="page-title">My Profile</h1>
+                            <p class="page-subtitle">Manage your account information and reading statistics</p>
+                        </div>
+                        
+                        <!-- Profile Stats Overview -->
+                        <div class="profile-stats-overview">
+                            <div class="stat-card profile-stat">
+                                <div class="stat-icon">
+                                    <i class="fas fa-book-open"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-number" id="profileBooksBorrowed">0</div>
+                                    <div class="stat-label">Books Borrowed</div>
+                                </div>
+                            </div>
+                            <div class="stat-card profile-stat">
+                                <div class="stat-icon">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-number" id="profileReviewsGiven">0</div>
+                                    <div class="stat-label">Reviews Given</div>
+                                </div>
+                            </div>
+                            <div class="stat-card profile-stat">
+                                <div class="stat-icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-number" id="profileReadingHours">0</div>
+                                    <div class="stat-label">Reading Hours</div>
+                                </div>
+                            </div>
+                            <div class="stat-card profile-stat">
+                                <div class="stat-icon">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-number" id="profileMemberDays">0</div>
+                                    <div class="stat-label">Member Days</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Main Profile Card -->
+                        <div class="profile-content">
+                            <div class="profile-card">
+                                <div class="profile-header">
+                                    <div class="profile-avatar">
+                                        <div class="avatar-image">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div class="avatar-status">
+                                            <div class="status-indicator active"></div>
+                                        </div>
+                                    </div>
+                                    <div class="profile-info">
+                                        <h2 id="profileUserName">User Name</h2>
+                                        <p id="profileUserEmail">user@example.com</p>
+                                        <div class="profile-badges">
+                                            <span class="badge member-badge">
+                                                <i class="fas fa-crown"></i>
+                                                Premium Member
+                                            </span>
+                                            <span class="badge level-badge">
+                                                <i class="fas fa-trophy"></i>
+                                                Level 5 Reader
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="profile-details">
+                                    <div class="detail-section">
+                                        <h3 class="section-title">
+                                            <i class="fas fa-info-circle"></i>
+                                            Account Information
+                                        </h3>
+                                        <div class="detail-item">
+                                            <div class="detail-label">
+                                                <i class="fas fa-calendar"></i>
+                                                <span>Member Since</span>
+                                            </div>
+                                            <span class="detail-value">January 2024</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <div class="detail-label">
+                                                <i class="fas fa-envelope"></i>
+                                                <span>Email</span>
+                                            </div>
+                                            <span class="detail-value" id="profileUserEmailDetail">user@example.com</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <div class="detail-label">
+                                                <i class="fas fa-phone"></i>
+                                                <span>Phone</span>
+                                            </div>
+                                            <span class="detail-value">+1 (555) 123-4567</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="detail-section">
+                                        <h3 class="section-title">
+                                            <i class="fas fa-chart-line"></i>
+                                            Reading Statistics
+                                        </h3>
+                                        <div class="detail-item">
+                                            <div class="detail-label">
+                            <i class="fas fa-book"></i>
+                                                <span>Favorite Genre</span>
+                                            </div>
+                                            <span class="detail-value">Fiction</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <div class="detail-label">
+                                                <i class="fas fa-clock"></i>
+                                                <span>Average Reading Time</span>
+                                            </div>
+                                            <span class="detail-value">2.5 hours/day</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <div class="detail-label">
+                                                <i class="fas fa-star"></i>
+                                                <span>Average Rating Given</span>
+                                            </div>
+                                            <span class="detail-value">4.2/5.0</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="profile-actions">
+                                    <button class="btn-primary" onclick="showProfileModal()">
+                                        <i class="fas fa-edit"></i>
+                                        Edit Profile
+                                    </button>
+                                    <button class="btn-secondary" onclick="showReadingHistory()">
+                                        <i class="fas fa-history"></i>
+                                        Reading History
+                                    </button>
+                                    <button class="btn-secondary" onclick="showAchievements()">
+                                        <i class="fas fa-medal"></i>
+                                        Achievements
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Reading Progress Section -->
+                        <div class="reading-progress-section">
+                            <div class="progress-card">
+                                <h3 class="progress-title">
+                                    <i class="fas fa-chart-pie"></i>
+                                    Reading Progress
+                                </h3>
+                                <div class="progress-stats">
+                                    <div class="progress-item">
+                                        <div class="progress-label">Monthly Goal</div>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 75%"></div>
+                                        </div>
+                                        <div class="progress-text">6/8 books</div>
+                                    </div>
+                                    <div class="progress-item">
+                                        <div class="progress-label">Yearly Challenge</div>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 45%"></div>
+                                        </div>
+                                        <div class="progress-text">27/60 books</div>
+                                    </div>
+                                </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+            <!-- History Section -->
+            <section class="content-section" id="historySection">
+                <div class="page-content">
+                    <div class="container">
+                        <div class="page-header">
+                            <h1 class="page-title">Reading History</h1>
+                            <p class="page-subtitle">Track your reading journey and library activities</p>
+                        </div>
+                        
+                        <!-- History Stats Overview -->
+                        <div class="history-stats-overview">
+                            <div class="stat-card history-stat">
+                                <div class="stat-icon">
+                                    <i class="fas fa-book-reader"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-number" id="historyBooksRead">0</div>
+                                    <div class="stat-label">Books Read</div>
+                                </div>
+                            </div>
+                            <div class="stat-card history-stat">
+                                <div class="stat-icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-number" id="historyReadingTime">0</div>
+                                    <div class="stat-label">Hours Read</div>
+                                </div>
+                            </div>
+                            <div class="stat-card history-stat">
+                                <div class="stat-icon">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-number" id="historyAverageRating">0</div>
+                                    <div class="stat-label">Avg Rating</div>
+                                </div>
+                            </div>
+                            <div class="stat-card history-stat">
+                                <div class="stat-icon">
+                                    <i class="fas fa-calendar-check"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-number" id="historyActiveDays">0</div>
+                                    <div class="stat-label">Active Days</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- History Filters -->
+                        <div class="history-filters">
+                            <div class="filter-section">
+                                <label for="historyFilter">Filter by:</label>
+                                <select id="historyFilter" onchange="filterHistory(this.value)">
+                                    <option value="all">All Activities</option>
+                                    <option value="borrowed">Books Borrowed</option>
+                                    <option value="returned">Books Returned</option>
+                                    <option value="renewed">Books Renewed</option>
+                                    <option value="reviewed">Books Reviewed</option>
+                                </select>
+                            </div>
+                            <div class="filter-section">
+                                <label for="historySort">Sort by:</label>
+                                <select id="historySort" onchange="sortHistory(this.value)">
+                                    <option value="recent">Most Recent</option>
+                                    <option value="oldest">Oldest First</option>
+                                    <option value="book">Book Title</option>
+                                    <option value="rating">Rating</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- History Timeline -->
+                        <div class="history-content">
+                            <div class="history-timeline" id="historyTimelineContent">
+                                <!-- History items will be loaded here -->
+                            </div>
+                        </div>
+
+                        <!-- Reading Insights -->
+                        <div class="reading-insights">
+                            <div class="insight-card">
+                                <h3 class="insight-title">
+                                    <i class="fas fa-chart-line"></i>
+                                    Reading Insights
+                                </h3>
+                                <div class="insights-grid">
+                                    <div class="insight-item">
+                                        <div class="insight-icon">
+                                            <i class="fas fa-book-open"></i>
+                                        </div>
+                                        <div class="insight-content">
+                                            <div class="insight-label">Most Read Genre</div>
+                                            <div class="insight-value">Fiction</div>
+                                        </div>
+                                    </div>
+                                    <div class="insight-item">
+                                        <div class="insight-icon">
+                                            <i class="fas fa-calendar-alt"></i>
+                                        </div>
+                                        <div class="insight-content">
+                                            <div class="insight-label">Best Reading Month</div>
+                                            <div class="insight-value">March 2024</div>
+                                        </div>
+                                    </div>
+                                    <div class="insight-item">
+                                        <div class="insight-icon">
+                                            <i class="fas fa-clock"></i>
+                                        </div>
+                                        <div class="insight-content">
+                                            <div class="insight-label">Average Reading Time</div>
+                                            <div class="insight-value">2.5 hours/day</div>
+                                        </div>
+                                    </div>
+                                    <div class="insight-item">
+                                        <div class="insight-icon">
+                                            <i class="fas fa-trophy"></i>
+                                        </div>
+                                        <div class="insight-content">
+                                            <div class="insight-label">Reading Streak</div>
+                                            <div class="insight-value">15 days</div>
+                                        </div>
+                                    </div>
+                                </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+        </div>
+    </div>
+
+    <!-- Notifications Modal -->
+    <div class="modal" id="notificationsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Notifications</h3>
+                <span class="close" onclick="closeNotifications()">&times;</span>
+            </div>
+            <div class="modal-body" id="notificationsBody">
+                <!-- Notifications will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="modal" id="profileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Profile</h3>
+                <span class="close" onclick="closeProfileModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form class="profile-form">
+                    <div class="form-group">
+                        <label for="profileName">Full Name</label>
+                        <input type="text" id="profileName" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="profileEmail">Email</label>
+                        <input type="email" id="profileEmail" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="profilePhone">Phone</label>
+                        <input type="tel" id="profilePhone" name="phone">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="closeProfileModal()">Cancel</button>
+                        <button type="submit" class="btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- History Modal -->
+    <div class="modal" id="historyModal">
+        <div class="modal-content large-modal">
+            <div class="modal-header">
+                <h3>Reading History</h3>
+                <span class="close" onclick="closeHistoryModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="history-timeline" id="historyTimeline">
+                    <!-- History items will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Book Details Modal -->
+    <div class="modal" id="bookDetailsModal">
+        <div class="modal-content large-modal">
+            <div class="modal-header">
+                <h2 id="bookDetailsTitle">Book Details</h2>
+                <button class="close" onclick="closeBookDetails()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="book-details-content">
+                    <div class="book-details-image">
+                        <img id="bookDetailsImage" src="" alt="Book Cover" class="book-details-cover">
+                    </div>
+                    <div class="book-details-info">
+                        <div class="book-details-meta">
+                            <span id="bookDetailsCategory" class="book-category"></span>
+                            <span id="bookDetailsStatus" class="book-status"></span>
+                            <span id="bookDetailsBadge" class="book-badge"></span>
+                        </div>
+                        <h3 id="bookDetailsTitleText"></h3>
+                        <p id="bookDetailsAuthor" class="book-author"></p>
+                        <div class="book-details-rating">
+                            <div id="bookDetailsStars" class="rating-stars"></div>
+                            <span id="bookDetailsRating" class="rating-number"></span>
+                            <span id="bookDetailsReviewCount" class="review-count"></span>
+                        </div>
+                        <div class="book-details-stats">
+                            <div class="stat-item">
+                                <i class="fas fa-download"></i>
+                                <span id="bookDetailsDownloads"></span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-clock"></i>
+                                <span id="bookDetailsReadTime"></span>
+                            </div>
+                        </div>
+                        <div class="book-description">
+                            <h4>Description</h4>
+                            <p id="bookDetailsDescription"></p>
+                        </div>
+                        <div class="book-details-actions">
+                            <button id="bookDetailsBorrowBtn" class="btn-primary" onclick="borrowBookFromDetails()">
+                                <i class="fas fa-book-open"></i>
+                                Borrow Book
+                            </button>
+                            <button class="btn-secondary" onclick="toggleFavorite()">
+                                <i class="fas fa-heart"></i>
+                                Add to Favorites
+                            </button>
+                            <button class="btn-secondary" onclick="closeBookDetails()">
+                                <i class="fas fa-times"></i>
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>LibraryMS</h3>
+                    <p>Your gateway to knowledge and learning. Join thousands of readers in our digital library community.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="books.html">Books</a></li>
+                        <li><a href="dashboard.html">Dashboard</a></li>
+                        <li><a href="#" onclick="logout()">Logout</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#contact">Contact Us</a></li>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <div class="contact-info">
+                        <p><i class="fas fa-envelope"></i> info@libraryms.com</p>
+                        <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                        <p><i class="fas fa-map-marker-alt"></i> 123 Library Street, Book City</p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Library Management System. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/api-service.js"></script>
+    <script src="js/modern-dashboard.js"></script>
+</body>
+</html>

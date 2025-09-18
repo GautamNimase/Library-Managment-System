@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Books Collection - Library Management System</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+    <link rel="stylesheet" href="css/style.css?v=20241222">
+    <link rel="stylesheet" href="css/books.css?v=20241228">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <a href="index.html" class="nav-logo">
+                    <i class="fas fa-book-open"></i>
+                    <span>LibraryPro</span>
+                </a>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="books.html" class="nav-link active">Books</a>
+                    <a href="about.html" class="nav-link">About</a>
+                    <a href="contact.html" class="nav-link">Contact</a>
+                </div>
+                <a href="login.html" class="login-btn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>Login</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="books-hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <div class="hero-badge">
+                        <i class="fas fa-book"></i>
+                        <span>Our Collection</span>
+                    </div>
+                    <h1 class="hero-title">
+                        <span class="title-line">Discover Our</span>
+                        <span class="gradient-text">Book Collection</span>
+                    </h1>
+                    <p class="hero-description">
+                        Explore thousands of books across various genres. Find your next favorite read with our advanced search and filtering system.
+                    </p>
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <span class="stat-number" data-target="12500">0</span>
+                            <span class="stat-label">Books Available</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" data-target="150">0</span>
+                            <span class="stat-label">Categories</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" data-target="50000">0</span>
+                            <span class="stat-label">Happy Readers</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <div class="image-container">
+                        <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Library Collection">
+                        <div class="image-overlay">
+                            <i class="fas fa-book floating-book"></i>
+                            <i class="fas fa-book-open floating-book"></i>
+                            <i class="fas fa-bookmark floating-book"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search and Filter Section -->
+    <section class="search-filter">
+        <div class="container">
+            <div class="search-content">
+                <div class="search-bar">
+                    <div class="search-input-group">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search for books, authors, or genres...">
+                        <button class="search-btn">
+                            <i class="fas fa-search"></i>
+                            <span>Search</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="filter-section">
+                    <div class="filter-group">
+                        <label>Category:</label>
+                        <select id="categoryFilter">
+                            <option value="all">All Categories</option>
+                            <option value="fiction">Fiction</option>
+                            <option value="non-fiction">Non-Fiction</option>
+                            <option value="technology">Technology</option>
+                            <option value="science">Science</option>
+                            <option value="history">History</option>
+                            <option value="biography">Biography</option>
+                            <option value="mystery">Mystery</option>
+                            <option value="romance">Romance</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Sort by:</label>
+                        <select id="sortFilter">
+                            <option value="title">Title A-Z</option>
+                            <option value="author">Author A-Z</option>
+                            <option value="rating">Highest Rated</option>
+                            <option value="newest">Newest First</option>
+                            <option value="popular">Most Popular</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Availability:</label>
+                        <select id="availabilityFilter">
+                            <option value="all">All Books</option>
+                            <option value="available">Available Now</option>
+                            <option value="borrowed">Currently Borrowed</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Books Grid Section -->
+    <section class="books-collection">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-badge">
+                    <i class="fas fa-fire"></i>
+                    <span>Our Collection</span>
+                </div>
+                <h2>Browse Our Books</h2>
+                <p>Discover amazing books from our extensive collection</p>
+            </div>
+            
+            <div class="books-grid" id="booksGrid">
+                <!-- Books will be dynamically loaded here -->
+            </div>
+            
+            <div class="load-more-section">
+                <button class="load-more-btn" id="loadMoreBtn">
+                    <i class="fas fa-plus"></i>
+                    <span>Load More Books</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Book Details Modal -->
+    <div class="modal-overlay" id="bookModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeModal">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-body">
+                <div class="book-details">
+                    <div class="book-cover-large">
+                        <img id="modalBookImage" src="" alt="Book Cover">
+                        <div class="book-status" id="bookStatus">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Available</span>
+                        </div>
+                    </div>
+                    <div class="book-info-large">
+                        <h1 id="modalBookTitle">Book Title</h1>
+                        <p class="author" id="modalBookAuthor">by Author Name</p>
+                        
+                        <div class="book-meta-large">
+                            <div class="meta-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>Published: <span id="modalBookYear">2023</span></span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-building"></i>
+                                <span>Publisher: <span id="modalBookPublisher">Publisher Name</span></span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-dollar-sign"></i>
+                                <span>Price: <span id="modalBookPrice">$19.99</span></span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-box"></i>
+                                <span>Stock: <span id="modalBookStock">5 available</span></span>
+                            </div>
+                        </div>
+                        
+                        <div class="book-rating-large">
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <span class="rating-text" id="modalBookRating">4.8 (1,234 reviews)</span>
+                        </div>
+                        
+                        <div class="book-actions">
+                            <button class="borrow-btn" id="borrowBtn">
+                                <i class="fas fa-book-open"></i>
+                                <span>Borrow This Book</span>
+                            </button>
+                            <button class="favorite-btn-large" id="favoriteBtn">
+                                <i class="far fa-heart"></i>
+                                <span>Add to Favorites</span>
+                            </button>
+                        </div>
+                        
+                        <div class="book-description">
+                            <h3>Description</h3>
+                            <p id="modalBookDescription">
+                                This is a sample description for the book. In a real application, this would contain the actual book description, summary, and other relevant information about the book.
+                            </p>
+                        </div>
+                        
+                        <div class="book-reviews">
+                            <h3>Reviews (<span id="reviewCount">0</span>)</h3>
+                            <div class="reviews-list" id="reviewsList">
+                                <p class="no-reviews">No reviews yet. Be the first to review this book!</p>
+                            </div>
+                            <button class="add-review-btn" id="addReviewBtn">
+                                <i class="fas fa-plus"></i>
+                                <span>Add Review</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Review Modal -->
+    <div class="modal-overlay" id="reviewModal">
+        <div class="modal-content review-modal">
+            <button class="modal-close" id="closeReviewModal">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-body">
+                <h2>Add Your Review</h2>
+                <form class="review-form" id="reviewForm">
+                    <div class="rating-input">
+                        <label>Your Rating:</label>
+                        <div class="star-rating">
+                            <input type="radio" name="rating" value="5" id="star5">
+                            <label for="star5"><i class="fas fa-star"></i></label>
+                            <input type="radio" name="rating" value="4" id="star4">
+                            <label for="star4"><i class="fas fa-star"></i></label>
+                            <input type="radio" name="rating" value="3" id="star3">
+                            <label for="star3"><i class="fas fa-star"></i></label>
+                            <input type="radio" name="rating" value="2" id="star2">
+                            <label for="star2"><i class="fas fa-star"></i></label>
+                            <input type="radio" name="rating" value="1" id="star1">
+                            <label for="star1"><i class="fas fa-star"></i></label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="reviewTitle">Review Title:</label>
+                        <input type="text" id="reviewTitle" placeholder="Enter a title for your review" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reviewText">Your Review:</label>
+                        <textarea id="reviewText" placeholder="Share your thoughts about this book..." required></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn" id="cancelReview">Cancel</button>
+                        <button type="submit" class="submit-btn">Submit Review</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>LibraryPro</h3>
+                    <p>Your gateway to knowledge and learning. Discover, borrow, and enjoy books from our extensive collection.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="books.html">Books</a></li>
+                        <li><a href="about.html">About</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#help">Help Center</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                        <li><a href="#privacy">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Newsletter</h4>
+                    <p>Subscribe to get updates on new books and features.</p>
+                    <div class="newsletter-form">
+                        <input type="email" placeholder="Enter your email">
+                        <button type="submit">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 LibraryPro. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/books.js?v=20241227"></script>
+</body>
+</html>

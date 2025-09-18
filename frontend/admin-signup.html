@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Registration - Library Management System</title>
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-logo">
+                    <i class="fas fa-book-open"></i>
+                    <h1>Library Admin</h1>
+                </div>
+                <h2>Create Admin Account</h2>
+                <p>Register as a library administrator</p>
+            </div>
+
+            <form id="adminSignupForm" class="auth-form">
+                <div class="form-group">
+                    <label for="adminName" class="form-label">Full Name</label>
+                    <div class="input-group">
+                        <i class="fas fa-user input-icon"></i>
+                        <input type="text" id="adminName" name="name" class="form-input" required placeholder="Enter your full name">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="adminEmail" class="form-label">Email Address</label>
+                    <div class="input-group">
+                        <i class="fas fa-envelope input-icon"></i>
+                        <input type="email" id="adminEmail" name="email" class="form-input" required placeholder="Enter your email">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="adminPassword" class="form-label">Password</label>
+                    <div class="input-group">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" id="adminPassword" name="password" class="form-input" required placeholder="Create a password">
+                        <i class="fas fa-eye password-toggle" onclick="togglePassword('adminPassword')"></i>
+                    </div>
+                    <div class="password-strength">
+                        <div class="strength-bar">
+                            <div class="strength-fill" id="strengthFill"></div>
+                        </div>
+                        <span class="strength-text" id="strengthText">Password strength</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword" class="form-label">Confirm Password</label>
+                    <div class="input-group">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" id="confirmPassword" name="confirmPassword" class="form-input" required placeholder="Confirm your password">
+                        <i class="fas fa-eye password-toggle" onclick="togglePassword('confirmPassword')"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="adminKey" class="form-label">Admin Key</label>
+                    <div class="input-group">
+                        <i class="fas fa-key input-icon"></i>
+                        <input type="password" id="adminKey" name="admin_key" class="form-input" required placeholder="Enter admin key">
+                        <i class="fas fa-eye password-toggle" onclick="togglePassword('adminKey')"></i>
+                    </div>
+                    <small class="form-help">Contact system administrator for the admin key</small>
+                </div>
+
+                <div class="form-options">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="agreeTerms" required>
+                        <label for="agreeTerms">I agree to the <a href="#" class="terms-link">Terms of Service</a> and <a href="#" class="terms-link">Privacy Policy</a></label>
+                    </div>
+                </div>
+
+                <button type="submit" class="auth-btn" id="signupBtn">
+                    <span class="btn-text">Create Admin Account</span>
+                    <div class="btn-loading" style="display: none;">
+                        <div class="loading"></div>
+                    </div>
+                </button>
+
+                <div class="auth-footer">
+                    <p>Already have an admin account? <a href="admin-login.html" class="auth-link">Sign In</a></p>
+                    <p><a href="index.html" class="auth-link">← Back to Home</a></p>
+                </div>
+            </form>
+        </div>
+
+        <div class="auth-sidebar">
+            <div class="sidebar-content">
+                <h3>Library Management System</h3>
+                <p>Join our team of administrators and help manage the library efficiently.</p>
+                
+                <div class="features-list">
+                    <div class="feature-item">
+                        <i class="fas fa-users-cog"></i>
+                        <span>User Management</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-book"></i>
+                        <span>Book Catalog</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Analytics & Reports</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-bell"></i>
+                        <span>Notifications</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        // Admin signup functionality
+        document.getElementById('adminSignupForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                name: document.getElementById('adminName').value.trim(),
+                email: document.getElementById('adminEmail').value.trim(),
+                password: document.getElementById('adminPassword').value,
+                admin_key: document.getElementById('adminKey').value
+            };
+            
+            // Validate form
+            if (!validateAdminSignupForm(formData)) {
+                return;
+            }
+            
+            try {
+                setLoadingState(true);
+                
+                const response = await apiCall('http://localhost:5000/api/auth/admin/register', {
+                    method: 'POST',
+                    body: JSON.stringify(formData)
+                });
+                
+                // Store admin token and data
+                localStorage.setItem('adminToken', response.token);
+                localStorage.setItem('adminData', JSON.stringify({
+                    admin_id: response.admin.admin_id,
+                    email: formData.email,
+                    name: response.admin.name
+                }));
+                
+                showMessage('Admin account created successfully! Redirecting...', 'success');
+                
+                // Redirect to admin dashboard
+                setTimeout(() => {
+                    window.location.href = 'admin-dashboard.html';
+                }, 2000);
+                
+            } catch (error) {
+                showMessage(`Registration failed: ${error.message}`, 'error');
+            } finally {
+                setLoadingState(false);
+            }
+        });
+        
+        // Password strength checker
+        document.getElementById('adminPassword').addEventListener('input', function() {
+            checkPasswordStrength(this.value);
+        });
+        
+        // Password confirmation checker
+        document.getElementById('confirmPassword').addEventListener('input', function() {
+            const password = document.getElementById('adminPassword').value;
+            const confirmPassword = this.value;
+            
+            if (confirmPassword && password !== confirmPassword) {
+                this.style.borderColor = '#e53e3e';
+                showFieldError(this, 'Passwords do not match');
+            } else {
+                this.style.borderColor = '#48bb78';
+                hideFieldError(this);
+            }
+        });
+        
+        function validateAdminSignupForm(formData) {
+            // Check if all fields are filled
+            if (!formData.name || !formData.email || !formData.password || !formData.admin_key) {
+                showMessage('Please fill in all fields', 'error');
+                return false;
+            }
+            
+            // Validate name
+            if (formData.name.length < 2) {
+                showMessage('Name must be at least 2 characters long', 'error');
+                return false;
+            }
+            
+            // Validate email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(formData.email)) {
+                showMessage('Please enter a valid email address', 'error');
+                return false;
+            }
+            
+            // Validate password
+            if (formData.password.length < 8) {
+                showMessage('Password must be at least 8 characters long', 'error');
+                return false;
+            }
+            
+            // Validate admin key
+            if (formData.admin_key !== 'admin123') {
+                showMessage('Invalid admin key', 'error');
+                return false;
+            }
+            
+            // Check password confirmation
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            if (formData.password !== confirmPassword) {
+                showMessage('Passwords do not match', 'error');
+                return false;
+            }
+            
+            // Check terms agreement
+            if (!document.getElementById('agreeTerms').checked) {
+                showMessage('Please agree to the terms and conditions', 'error');
+                return false;
+            }
+            
+            return true;
+        }
+        
+        function checkPasswordStrength(password) {
+            const strengthFill = document.getElementById('strengthFill');
+            const strengthText = document.getElementById('strengthText');
+            
+            let strength = 0;
+            let strengthLabel = 'Weak';
+            let strengthColor = '#e53e3e';
+            
+            // Check password criteria
+            if (password.length >= 8) strength += 1;
+            if (/[a-z]/.test(password)) strength += 1;
+            if (/[A-Z]/.test(password)) strength += 1;
+            if (/[0-9]/.test(password)) strength += 1;
+            if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+            
+            // Set strength level
+            if (strength >= 4) {
+                strengthLabel = 'Strong';
+                strengthColor = '#48bb78';
+            } else if (strength >= 2) {
+                strengthLabel = 'Medium';
+                strengthColor = '#ed8936';
+            }
+            
+            // Update UI
+            strengthFill.style.width = `${(strength / 5) * 100}%`;
+            strengthFill.style.backgroundColor = strengthColor;
+            strengthText.textContent = strengthLabel;
+            strengthText.style.color = strengthColor;
+        }
+        
+        function setLoadingState(loading) {
+            const btn = document.getElementById('signupBtn');
+            const btnText = btn.querySelector('.btn-text');
+            const btnLoading = btn.querySelector('.btn-loading');
+            
+            if (loading) {
+                btnText.style.display = 'none';
+                btnLoading.style.display = 'flex';
+                btn.disabled = true;
+            } else {
+                btnText.style.display = 'block';
+                btnLoading.style.display = 'none';
+                btn.disabled = false;
+            }
+        }
+        
+        function showFieldError(input, message) {
+            hideFieldError(input);
+            
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'field-error';
+            errorDiv.textContent = message;
+            errorDiv.style.color = '#e53e3e';
+            errorDiv.style.fontSize = '0.875rem';
+            errorDiv.style.marginTop = '0.25rem';
+            
+            input.parentNode.parentNode.appendChild(errorDiv);
+        }
+        
+        function hideFieldError(input) {
+            const existingError = input.parentNode.parentNode.querySelector('.field-error');
+            if (existingError) {
+                existingError.remove();
+            }
+        }
+    </script>
+</body>
+</html>

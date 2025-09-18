@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Registration - Library Management System</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/notifications.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .debug-info {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: monospace;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+        }
+        .debug-info.error {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .debug-info.success {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-logo">
+                    <i class="fas fa-bug"></i>
+                    <span>Debug Registration</span>
+                </div>
+                <h2>Debug Registration Form</h2>
+                <p>This page helps debug registration issues</p>
+            </div>
+            
+            <form id="debugRegisterForm" class="auth-form">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="name" name="name" required value="Test User">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="email" name="email" required value="test@example.com">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" name="password" required value="password123">
+                    </div>
+                </div>
+                
+                <button type="submit" class="auth-btn">
+                    <span class="btn-text">Test Registration</span>
+                    <div class="btn-loading" style="display: none;">
+                        <div class="loading"></div>
+                    </div>
+                </button>
+            </form>
+            
+            <div id="debugOutput" class="debug-info" style="display: none;"></div>
+            
+            <div class="auth-footer">
+                <p><a href="register.html">Back to Registration</a></p>
+            </div>
+        </div>
+        
+        <div class="auth-image">
+            <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Debug Registration">
+            <div class="image-overlay">
+                <h3>Debug Mode</h3>
+                <p>This page shows detailed information about the registration process to help identify issues.</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Debug registration function
+        async function debugRegister(formData) {
+            const debugOutput = document.getElementById('debugOutput');
+            debugOutput.style.display = 'block';
+            debugOutput.className = 'debug-info';
+            debugOutput.textContent = 'Starting registration process...\n';
+            
+            try {
+                debugOutput.textContent += `\n1. Preparing request data:\n${JSON.stringify(formData, null, 2)}\n`;
+                
+                debugOutput.textContent += '\n2. Making API request to: http://localhost:5000/api/auth/register\n';
+                
+                const response = await fetch('http://localhost:5000/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                debugOutput.textContent += `\n3. Response received:\nStatus: ${response.status}\nStatus Text: ${response.statusText}\n`;
+                debugOutput.textContent += `Headers: ${JSON.stringify([...response.headers.entries()], null, 2)}\n`;
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    debugOutput.textContent += `\n4. Error response body:\n${errorText}\n`;
+                    debugOutput.className = 'debug-info error';
+                    debugOutput.textContent += '\n❌ Registration failed due to server error';
+                    return;
+                }
+                
+                const contentType = response.headers.get('content-type');
+                debugOutput.textContent += `\n4. Content-Type: ${contentType}\n`;
+                
+                if (!contentType || !contentType.includes('application/json')) {
+                    debugOutput.textContent += '\n❌ Response is not JSON format';
+                    debugOutput.className = 'debug-info error';
+                    return;
+                }
+                
+                const data = await response.json();
+                debugOutput.textContent += `\n5. Parsed response data:\n${JSON.stringify(data, null, 2)}\n`;
+                
+                if (data.token) {
+                    debugOutput.textContent += '\n6. Storing user data in localStorage...\n';
+                    localStorage.setItem('userToken', data.token);
+                    localStorage.setItem('userData', JSON.stringify({
+                        user_id: data.user_id,
+                        email: formData.email,
+                        name: formData.name
+                    }));
+                    
+                    debugOutput.textContent += '✅ Registration successful!\n';
+                    debugOutput.textContent += '✅ User data stored in localStorage\n';
+                    debugOutput.textContent += '✅ Redirecting to dashboard...\n';
+                    debugOutput.className = 'debug-info success';
+                    
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 2000);
+                } else {
+                    debugOutput.textContent += '\n❌ No token received from server';
+                    debugOutput.className = 'debug-info error';
+                }
+                
+            } catch (error) {
+                debugOutput.textContent += `\n❌ Error occurred:\n${error.message}\n`;
+                debugOutput.textContent += `\nFull error object:\n${JSON.stringify(error, null, 2)}\n`;
+                debugOutput.className = 'debug-info error';
+            }
+        }
+        
+        // Set loading state
+        function setLoadingState(loading) {
+            const btn = document.querySelector('.auth-btn');
+            const btnText = btn.querySelector('.btn-text');
+            const btnLoading = btn.querySelector('.btn-loading');
+            
+            if (loading) {
+                btn.disabled = true;
+                btnText.style.display = 'none';
+                btnLoading.style.display = 'block';
+            } else {
+                btn.disabled = false;
+                btnText.style.display = 'block';
+                btnLoading.style.display = 'none';
+            }
+        }
+        
+        // Form submission
+        document.getElementById('debugRegisterForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value
+            };
+            
+            setLoadingState(true);
+            await debugRegister(formData);
+            setLoadingState(false);
+        });
+    </script>
+</body>
+</html>

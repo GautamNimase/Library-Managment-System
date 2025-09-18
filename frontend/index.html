@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+    <link rel="stylesheet" href="css/style.css?v=20241228">
+    <link rel="stylesheet" href="css/notifications.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <a href="index.html" class="nav-logo">
+                    <i class="fas fa-book-open"></i>
+                    <span>LibraryPro</span>
+                </a>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link active">Home</a>
+                    <a href="books.html" class="nav-link">Books</a>
+                    <a href="about.html" class="nav-link">About</a>
+                    <a href="contact.html" class="nav-link">Contact</a>
+                </div>
+                <a href="login.html" class="login-btn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>Login</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Floating Particles Background -->
+    <div class="particles-container">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <div class="hero-badge">
+                    <i class="fas fa-star"></i>
+                    <span>Trusted by 10,000+ Readers</span>
+                </div>
+                <h1 class="hero-title">
+                    <span class="title-line">Welcome to Our</span>
+                    <span class="title-line gradient-text">Digital Library</span>
+                </h1>
+                <p class="hero-description">Discover thousands of books, manage your reading journey, and connect with fellow book lovers in our comprehensive library management system.</p>
+                
+                <!-- Interactive Stats -->
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-number" data-target="50000">0</div>
+                        <div class="stat-label">Books Available</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" data-target="15000">0</div>
+                        <div class="stat-label">Active Readers</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" data-target="98">0</div>
+                        <div class="stat-label">Satisfaction Rate</div>
+                    </div>
+                </div>
+
+                <div class="hero-buttons">
+                    <a href="register.html" class="btn btn-primary">
+                        <i class="fas fa-rocket"></i>
+                        <span>Get Started</span>
+                        <div class="btn-shine"></div>
+                    </a>
+                    <a href="#books" class="btn btn-secondary">
+                        <i class="fas fa-book-open"></i>
+                        <span>Browse Books</span>
+                    </a>
+                </div>
+
+                <!-- Quick Access Features -->
+                <div class="quick-features">
+                    <div class="feature-item">
+                        <i class="fas fa-search"></i>
+                        <span>Smart Search</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-mobile-alt"></i>
+                        <span>Mobile App</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-users"></i>
+                        <span>Community</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="image-container">
+                    <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Modern Library" class="hero-img">
+                    <div class="image-overlay">
+                        <div class="floating-book">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <div class="floating-book">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+                        <div class="floating-book">
+                            <i class="fas fa-bookmark"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Books Section -->
+    <section class="featured-books">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-badge">
+                    <i class="fas fa-fire"></i>
+                    <span>Trending Now</span>
+                </div>
+                <h2>Featured Books</h2>
+                <p>Discover our most popular and trending books that readers love</p>
+                <div class="section-actions">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="fiction">Fiction</button>
+                    <button class="filter-btn" data-filter="non-fiction">Non-Fiction</button>
+                    <button class="filter-btn" data-filter="tech">Technology</button>
+                </div>
+            </div>
+            <div class="books-grid">
+                <div class="book-card" data-category="fiction">
+                    <div class="book-cover">
+                        <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="The Great Adventure">
+                        <div class="book-overlay">
+                            <button class="read-btn">
+                                <i class="fas fa-eye"></i>
+                                Preview
+                            </button>
+                            <button class="favorite-btn">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                        </div>
+                        <div class="book-badge">Bestseller</div>
+                    </div>
+                    <div class="book-info">
+                        <div class="book-category">Fiction</div>
+                        <h3>The Great Adventure</h3>
+                        <p class="author">by John Smith</p>
+                        <div class="book-meta">
+                            <div class="rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <span>4.9</span>
+                                <span class="review-count">(1,234 reviews)</span>
+                            </div>
+                            <div class="book-stats">
+                                <span><i class="fas fa-download"></i> 15.2k</span>
+                                <span><i class="fas fa-clock"></i> 8h read</span>
+                            </div>
+                        </div>
+                        <div class="book-price">
+                            <span class="price">$12.99</span>
+                            <span class="original-price">$19.99</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="book-card" data-category="non-fiction">
+                    <div class="book-cover">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Digital Dreams">
+                        <div class="book-overlay">
+                            <button class="read-btn">
+                                <i class="fas fa-eye"></i>
+                                Preview
+                            </button>
+                            <button class="favorite-btn">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                        </div>
+                        <div class="book-badge new">New</div>
+                    </div>
+                    <div class="book-info">
+                        <div class="book-category">Non-Fiction</div>
+                        <h3>Digital Dreams</h3>
+                        <p class="author">by Sarah Johnson</p>
+                        <div class="book-meta">
+                            <div class="rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <span>4.8</span>
+                                <span class="review-count">(892 reviews)</span>
+                            </div>
+                            <div class="book-stats">
+                                <span><i class="fas fa-download"></i> 8.7k</span>
+                                <span><i class="fas fa-clock"></i> 6h read</span>
+                            </div>
+                        </div>
+                        <div class="book-price">
+                            <span class="price">$15.99</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="book-card" data-category="tech">
+                    <div class="book-cover">
+                        <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Future Technology">
+                        <div class="book-overlay">
+                            <button class="read-btn">
+                                <i class="fas fa-eye"></i>
+                                Preview
+                            </button>
+                            <button class="favorite-btn">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                        </div>
+                        <div class="book-badge trending">Trending</div>
+                    </div>
+                    <div class="book-info">
+                        <div class="book-category">Technology</div>
+                        <h3>Future Technology</h3>
+                        <p class="author">by Mike Chen</p>
+                        <div class="book-meta">
+                            <div class="rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <span>4.7</span>
+                                <span class="review-count">(567 reviews)</span>
+                            </div>
+                            <div class="book-stats">
+                                <span><i class="fas fa-download"></i> 12.1k</span>
+                                <span><i class="fas fa-clock"></i> 10h read</span>
+                            </div>
+                        </div>
+                        <div class="book-price">
+                            <span class="price">$18.99</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="book-card" data-category="fiction">
+                    <div class="book-cover">
+                        <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Mystery of the Lost City">
+                        <div class="book-overlay">
+                            <button class="read-btn">
+                                <i class="fas fa-eye"></i>
+                                Preview
+                            </button>
+                            <button class="favorite-btn">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                        </div>
+                        <div class="book-badge">Popular</div>
+                    </div>
+                    <div class="book-info">
+                        <div class="book-category">Fiction</div>
+                        <h3>Mystery of the Lost City</h3>
+                        <p class="author">by Emma Wilson</p>
+                        <div class="book-meta">
+                            <div class="rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <span>4.6</span>
+                                <span class="review-count">(743 reviews)</span>
+                            </div>
+                            <div class="book-stats">
+                                <span><i class="fas fa-download"></i> 9.8k</span>
+                                <span><i class="fas fa-clock"></i> 7h read</span>
+                            </div>
+                        </div>
+                        <div class="book-price">
+                            <span class="price">$14.99</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="book-card" data-category="non-fiction">
+                    <div class="book-cover">
+                        <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="The Art of Learning">
+                        <div class="book-overlay">
+                            <button class="read-btn">
+                                <i class="fas fa-eye"></i>
+                                Preview
+                            </button>
+                            <button class="favorite-btn">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                        </div>
+                        <div class="book-badge">Recommended</div>
+                    </div>
+                    <div class="book-info">
+                        <div class="book-category">Non-Fiction</div>
+                        <h3>The Art of Learning</h3>
+                        <p class="author">by David Lee</p>
+                        <div class="book-meta">
+                            <div class="rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <span>4.8</span>
+                                <span class="review-count">(1,156 reviews)</span>
+                            </div>
+                            <div class="book-stats">
+                                <span><i class="fas fa-download"></i> 11.3k</span>
+                                <span><i class="fas fa-clock"></i> 5h read</span>
+                            </div>
+                        </div>
+                        <div class="book-price">
+                            <span class="price">$16.99</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="book-card" data-category="tech">
+                    <div class="book-cover">
+                        <img src="https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="AI Revolution">
+                        <div class="book-overlay">
+                            <button class="read-btn">
+                                <i class="fas fa-eye"></i>
+                                Preview
+                            </button>
+                            <button class="favorite-btn">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                        </div>
+                        <div class="book-badge new">New</div>
+                    </div>
+                    <div class="book-info">
+                        <div class="book-category">Technology</div>
+                        <h3>AI Revolution</h3>
+                        <p class="author">by Alex Rodriguez</p>
+                        <div class="book-meta">
+                            <div class="rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <span>4.9</span>
+                                <span class="review-count">(2,341 reviews)</span>
+                            </div>
+                            <div class="book-stats">
+                                <span><i class="fas fa-download"></i> 18.7k</span>
+                                <span><i class="fas fa-clock"></i> 12h read</span>
+                            </div>
+                        </div>
+                        <div class="book-price">
+                            <span class="price">$22.99</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="section-footer">
+                <a href="books.html" class="view-all-btn">
+                    <span>View All Books</span>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-badge">
+                    <i class="fas fa-quote-left"></i>
+                    <span>What Readers Say</span>
+                </div>
+                <h2>Reader Testimonials</h2>
+                <p>Discover what our community of readers has to say about their experience</p>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <div class="quote-icon">
+                            <i class="fas fa-quote-left"></i>
+                        </div>
+                        <p>"This library system has completely transformed my reading experience. The interface is intuitive and the book recommendations are spot-on!"</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Sarah Johnson">
+                        </div>
+                        <div class="author-info">
+                            <h4>Sarah Johnson</h4>
+                            <span>Book Enthusiast</span>
+                            <div class="rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <div class="quote-icon">
+                            <i class="fas fa-quote-left"></i>
+                        </div>
+                        <p>"The mobile app is fantastic! I can access my books anywhere, anytime. The offline reading feature is a game-changer for my daily commute."</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Mike Chen">
+                        </div>
+                        <div class="author-info">
+                            <h4>Mike Chen</h4>
+                            <span>Tech Professional</span>
+                            <div class="rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <div class="quote-icon">
+                            <i class="fas fa-quote-left"></i>
+                        </div>
+                        <p>"As a student, this platform has been invaluable for my research. The search functionality and academic resources are top-notch!"</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Emma Wilson">
+                        </div>
+                        <div class="author-info">
+                            <h4>Emma Wilson</h4>
+                            <span>Graduate Student</span>
+                            <div class="rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="newsletter">
+        <div class="container">
+            <div class="newsletter-content">
+                <div class="newsletter-text">
+                    <h2>Stay Updated</h2>
+                    <p>Get the latest book recommendations, reading tips, and exclusive offers delivered to your inbox.</p>
+                </div>
+                <div class="newsletter-form">
+                    <form class="email-form">
+                        <div class="input-group">
+                            <input type="email" placeholder="Enter your email address" required>
+                            <button type="submit" class="subscribe-btn">
+                                <span>Subscribe</span>
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                        <p class="newsletter-note">Join 50,000+ readers who trust our recommendations</p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title">Why Choose Our Library System?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3>Easy Book Search</h3>
+                    <p>Find any book quickly with our advanced search functionality and filtering options.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Mobile Friendly</h3>
+                    <p>Access your library account and browse books from any device, anywhere.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <h3>Smart Notifications</h3>
+                    <p>Get timely reminders for due dates and receive updates about new arrivals.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3>Rating & Reviews</h3>
+                    <p>Share your thoughts and read reviews from other library members.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Books Preview Section -->
+    <section id="books" class="books-preview">
+        <div class="container">
+            <h2 class="section-title">Featured Books</h2>
+            <div class="books-grid" id="booksGrid">
+                <!-- Books will be loaded dynamically -->
+            </div>
+            <div class="text-center">
+                <a href="books.html" class="btn btn-outline">View All Books</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number" data-target="10000">0</div>
+                    <div class="stat-label">Books Available</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="5000">0</div>
+                    <div class="stat-label">Active Members</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="500">0</div>
+                    <div class="stat-label">New Books This Month</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="99">0</div>
+                    <div class="stat-label">Satisfaction Rate</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>LibraryMS</h3>
+                    <p>Your gateway to knowledge and learning. Join thousands of readers in our digital library community.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#books">Books</a></li>
+                        <li><a href="login.html">Login</a></li>
+                        <li><a href="register.html">Register</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <div class="contact-info">
+                        <p><i class="fas fa-envelope"></i> info@libraryms.com</p>
+                        <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                        <p><i class="fas fa-map-marker-alt"></i> 123 Library Street, Book City</p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Library Management System. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+    <script>
+        // Modern Homepage Enhancements
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animated Counter for Stats
+            function animateCounters() {
+                const counters = document.querySelectorAll('.stat-number');
+                counters.forEach(counter => {
+                    const target = parseInt(counter.getAttribute('data-target'));
+                    const duration = 2000; // 2 seconds
+                    const increment = target / (duration / 16); // 60fps
+                    let current = 0;
+                    
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= target) {
+                            current = target;
+                            clearInterval(timer);
+                        }
+                        counter.textContent = Math.floor(current).toLocaleString();
+                    }, 16);
+                });
+            }
+
+            // Intersection Observer for animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-in');
+                        
+                        // Trigger counter animation when stats section is visible
+                        if (entry.target.classList.contains('hero-stats')) {
+                            animateCounters();
+                        }
+                    }
+                });
+            }, observerOptions);
+
+            // Observe elements for animation
+            document.querySelectorAll('.hero-text, .hero-image, .book-card, .feature-item').forEach(el => {
+                observer.observe(el);
+            });
+
+            // Floating particles animation
+            function createFloatingParticles() {
+                const particles = document.querySelectorAll('.particle');
+                particles.forEach((particle, index) => {
+                    const randomX = Math.random() * window.innerWidth;
+                    const randomY = Math.random() * window.innerHeight;
+                    const randomSize = Math.random() * 4 + 2;
+                    const randomDuration = Math.random() * 20 + 10;
+                    
+                    particle.style.left = randomX + 'px';
+                    particle.style.top = randomY + 'px';
+                    particle.style.width = randomSize + 'px';
+                    particle.style.height = randomSize + 'px';
+                    particle.style.animationDuration = randomDuration + 's';
+                    particle.style.animationDelay = Math.random() * 5 + 's';
+                });
+            }
+
+            // Initialize floating particles
+            createFloatingParticles();
+
+            // Book card hover effects
+            document.querySelectorAll('.book-card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+
+            // Smooth scroll for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // Dynamic background gradient
+            function updateBackgroundGradient() {
+                const hero = document.querySelector('.hero');
+                const time = Date.now() * 0.001;
+                const hue1 = (Math.sin(time * 0.5) * 30 + 240) % 360;
+                const hue2 = (Math.sin(time * 0.3) * 30 + 280) % 360;
+                
+                hero.style.background = `linear-gradient(135deg, 
+                    hsl(${hue1}, 70%, 60%) 0%, 
+                    hsl(${hue2}, 70%, 50%) 100%)`;
+            }
+
+            // Update background every 100ms for smooth animation
+            setInterval(updateBackgroundGradient, 100);
+
+            // Typing effect for hero title
+            function typeWriter(element, text, speed = 100) {
+                let i = 0;
+                element.innerHTML = '';
+                
+                function type() {
+                    if (i < text.length) {
+                        element.innerHTML += text.charAt(i);
+                        i++;
+                        setTimeout(type, speed);
+                    }
+                }
+                type();
+            }
+
+            // Initialize typing effect after a delay
+            setTimeout(() => {
+                const titleElement = document.querySelector('.hero-title .gradient-text');
+                if (titleElement) {
+                    const originalText = titleElement.textContent;
+                    typeWriter(titleElement, originalText, 150);
+                }
+            }, 1000);
+
+            // Parallax effect for hero image
+            window.addEventListener('scroll', () => {
+                const scrolled = window.pageYOffset;
+                const heroImage = document.querySelector('.hero-image');
+                if (heroImage) {
+                    heroImage.style.transform = `translateY(${scrolled * 0.5}px)`;
+                }
+            });
+
+            // Add click effects to buttons
+            document.querySelectorAll('.btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    const ripple = document.createElement('span');
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+                    
+                    ripple.style.width = ripple.style.height = size + 'px';
+                    ripple.style.left = x + 'px';
+                    ripple.style.top = y + 'px';
+                    ripple.classList.add('ripple');
+                    
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });
+            });
+
+            // Book filtering functionality
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const bookCards = document.querySelectorAll('.book-card');
+
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    const filter = this.getAttribute('data-filter');
+                    
+                    bookCards.forEach(card => {
+                        if (filter === 'all' || card.getAttribute('data-category') === filter) {
+                            card.style.display = 'block';
+                            card.style.animation = 'slideInUp 0.5s ease-out';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+
+            // Favorite button functionality
+            document.querySelectorAll('.favorite-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    this.classList.toggle('favorited');
+                    
+                    if (this.classList.contains('favorited')) {
+                        this.innerHTML = '<i class="fas fa-heart"></i>';
+                        this.style.color = '#ff4757';
+                        // Show notification
+                        showNotification('Added to favorites!', 'success');
+                    } else {
+                        this.innerHTML = '<i class="far fa-heart"></i>';
+                        this.style.color = '#fff';
+                        showNotification('Removed from favorites!', 'info');
+                    }
+                });
+            });
+
+            // Newsletter subscription
+            const newsletterForm = document.querySelector('.email-form');
+            if (newsletterForm) {
+                newsletterForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const email = this.querySelector('input[type="email"]').value;
+                    
+                    // Simulate subscription
+                    showNotification('Thank you for subscribing!', 'success');
+                    this.querySelector('input[type="email"]').value = '';
+                });
+            }
+
+            // Notification function
+            function showNotification(message, type = 'info') {
+                const notification = document.createElement('div');
+                notification.className = `notification notification-${type}`;
+                notification.innerHTML = `
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                    <span>${message}</span>
+                `;
+                
+                document.body.appendChild(notification);
+                
+                // Animate in
+                setTimeout(() => {
+                    notification.classList.add('show');
+                }, 100);
+                
+                // Remove after 3 seconds
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    setTimeout(() => {
+                        notification.remove();
+                    }, 300);
+                }, 3000);
+            }
+
+            // Enhanced book card interactions
+            document.querySelectorAll('.book-card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px) scale(1.02)';
+                    this.style.boxShadow = '0 20px 50px rgba(0, 0, 0, 0.2)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                    this.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.1)';
+                });
+            });
+
+            // Testimonial carousel (if needed)
+            let currentTestimonial = 0;
+            const testimonials = document.querySelectorAll('.testimonial-card');
+            
+            function showTestimonial(index) {
+                testimonials.forEach((testimonial, i) => {
+                    testimonial.style.opacity = i === index ? '1' : '0.7';
+                    testimonial.style.transform = i === index ? 'scale(1)' : 'scale(0.95)';
+                });
+            }
+            
+            // Auto-rotate testimonials
+            setInterval(() => {
+                currentTestimonial = (currentTestimonial + 1) % testimonials.length;
+                showTestimonial(currentTestimonial);
+            }, 5000);
+        });
+    </script>
+</body>
+</html>

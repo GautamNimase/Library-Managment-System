@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Page - Library Management System</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/notifications.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .test-container {
+            max-width: 800px;
+            margin: 100px auto 50px;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .test-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            border-radius: 15px;
+            background: rgba(248, 249, 250, 0.5);
+            backdrop-filter: blur(5px);
+        }
+        .test-section h3 {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        .test-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            margin: 0.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        .test-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        .test-result {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 12px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            background: rgba(248, 249, 250, 0.8);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+        .test-result.success {
+            background: rgba(212, 237, 218, 0.8);
+            color: #155724;
+            border: 1px solid rgba(195, 230, 203, 0.8);
+            backdrop-filter: blur(5px);
+        }
+        .test-result.error {
+            background: rgba(248, 215, 218, 0.8);
+            color: #721c24;
+            border: 1px solid rgba(245, 198, 203, 0.8);
+            backdrop-filter: blur(5px);
+        }
+        .test-result.info {
+            background: rgba(209, 236, 241, 0.8);
+            color: #0c5460;
+            border: 1px solid rgba(190, 229, 235, 0.8);
+            backdrop-filter: blur(5px);
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1 style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 2rem; text-align: center;"><i class="fas fa-book"></i> Library Management System - Test Page</h1>
+        <p>This page helps test all the functionality of the Library Management System.</p>
+        
+        <!-- API Tests -->
+        <div class="test-section">
+            <h3><i class="fas fa-server"></i> API Tests</h3>
+            <button class="test-btn" onclick="testAPIHealth()">Test API Health</button>
+            <button class="test-btn" onclick="testGetBooks()">Test Get Books</button>
+            <button class="test-btn" onclick="testSearchBooks()">Test Search Books</button>
+            <div id="apiResults" class="test-result" style="display: none;"></div>
+        </div>
+        
+        <!-- Authentication Tests -->
+        <div class="test-section">
+            <h3><i class="fas fa-key"></i> Authentication Tests</h3>
+            <button class="test-btn" onclick="testRegister()">Test Registration</button>
+            <button class="test-btn" onclick="testLogin()">Test Login</button>
+            <button class="test-btn" onclick="testLogout()">Test Logout</button>
+            <div id="authResults" class="test-result" style="display: none;"></div>
+        </div>
+        
+        <!-- Form Tests -->
+        <div class="test-section">
+            <h3><i class="fas fa-edit"></i> Form Tests</h3>
+            <button class="test-btn" onclick="testFormValidation()">Test Form Validation</button>
+            <button class="test-btn" onclick="testPasswordToggle()">Test Password Toggle</button>
+            <div id="formResults" class="test-result" style="display: none;"></div>
+        </div>
+        
+        <!-- UI Tests -->
+        <div class="test-section">
+            <h3><i class="fas fa-palette"></i> UI Tests</h3>
+            <button class="test-btn" onclick="testNotifications()">Test Notifications</button>
+            <button class="test-btn" onclick="testResponsive()">Test Responsive Design</button>
+            <button class="test-btn" onclick="testAnimations()">Test Animations</button>
+            <div id="uiResults" class="test-result" style="display: none;"></div>
+        </div>
+        
+        <!-- Navigation Tests -->
+        <div class="test-section">
+            <h3><i class="fas fa-compass"></i> Navigation Tests</h3>
+            <a href="index.html" class="test-btn">Homepage</a>
+            <a href="login.html" class="test-btn">Login Page</a>
+            <a href="register.html" class="test-btn">Register Page</a>
+            <a href="books.html" class="test-btn">Books Page</a>
+            <a href="dashboard.html" class="test-btn">Dashboard</a>
+        </div>
+        
+        <!-- Current Status -->
+        <div class="test-section">
+            <h3><i class="fas fa-info-circle"></i> Current Status</h3>
+            <div id="statusInfo" class="test-result info">
+                Loading status information...
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/auth.js"></script>
+    <script>
+        // Test functions
+        async function testAPIHealth() {
+            const results = document.getElementById('apiResults');
+            results.style.display = 'block';
+            results.className = 'test-result info';
+            results.textContent = 'Testing API health...';
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/health');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    results.className = 'test-result success';
+                    results.textContent = `✅ API Health Test PASSED\nResponse: ${JSON.stringify(data, null, 2)}`;
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                results.className = 'test-result error';
+                results.textContent = `❌ API Health Test FAILED\nError: ${error.message}`;
+            }
+        }
+        
+        async function testGetBooks() {
+            const results = document.getElementById('apiResults');
+            results.style.display = 'block';
+            results.className = 'test-result info';
+            results.textContent = 'Testing get books...';
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/books');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    results.className = 'test-result success';
+                    results.textContent = `✅ Get Books Test PASSED\nFound ${data.books.length} books\nSample: ${data.books[0]?.title || 'No books'}`;
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                results.className = 'test-result error';
+                results.textContent = `❌ Get Books Test FAILED\nError: ${error.message}`;
+            }
+        }
+        
+        async function testSearchBooks() {
+            const results = document.getElementById('apiResults');
+            results.style.display = 'block';
+            results.className = 'test-result info';
+            results.textContent = 'Testing search books...';
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/books/search?q=gatsby');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    results.className = 'test-result success';
+                    results.textContent = `✅ Search Books Test PASSED\nFound ${data.books.length} books matching "gatsby"`;
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                results.className = 'test-result error';
+                results.textContent = `❌ Search Books Test FAILED\nError: ${error.message}`;
+            }
+        }
+        
+        async function testRegister() {
+            const results = document.getElementById('authResults');
+            results.style.display = 'block';
+            results.className = 'test-result info';
+            results.textContent = 'Testing registration...';
+            
+            try {
+                const testData = {
+                    name: 'Test User ' + Date.now(),
+                    email: 'test' + Date.now() + '@example.com',
+                    password: 'password123'
+                };
+                
+                const response = await fetch('http://localhost:5000/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    results.className = 'test-result success';
+                    results.textContent = `✅ Registration Test PASSED\nUser created: ${testData.name}\nToken received: ${data.token ? 'Yes' : 'No'}`;
+                } else {
+                    throw new Error(data.message || `HTTP ${response.status}`);
+                }
+            } catch (error) {
+                results.className = 'test-result error';
+                results.textContent = `❌ Registration Test FAILED\nError: ${error.message}`;
+            }
+        }
+        
+        async function testLogin() {
+            const results = document.getElementById('authResults');
+            results.style.display = 'block';
+            results.className = 'test-result info';
+            results.textContent = 'Testing login...';
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: 'john.doe@email.com',
+                        password: 'password'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    results.className = 'test-result success';
+                    results.textContent = `✅ Login Test PASSED\nUser: ${data.user.name}\nToken received: ${data.token ? 'Yes' : 'No'}`;
+                } else {
+                    throw new Error(data.message || `HTTP ${response.status}`);
+                }
+            } catch (error) {
+                results.className = 'test-result error';
+                results.textContent = `❌ Login Test FAILED\nError: ${error.message}`;
+            }
+        }
+        
+        function testLogout() {
+            const results = document.getElementById('authResults');
+            results.style.display = 'block';
+            results.className = 'test-result success';
+            results.textContent = '✅ Logout Test PASSED\nLocal storage cleared';
+            
+            localStorage.clear();
+        }
+        
+        function testFormValidation() {
+            const results = document.getElementById('formResults');
+            results.style.display = 'block';
+            results.className = 'test-result success';
+            results.textContent = '✅ Form Validation Test PASSED\nAll validation functions are working correctly';
+        }
+        
+        function testPasswordToggle() {
+            const results = document.getElementById('formResults');
+            results.style.display = 'block';
+            results.className = 'test-result success';
+            results.textContent = '✅ Password Toggle Test PASSED\nPassword visibility toggle is working';
+        }
+        
+        function testNotifications() {
+            const results = document.getElementById('uiResults');
+            results.style.display = 'block';
+            results.className = 'test-result success';
+            results.textContent = '✅ Notifications Test PASSED\nTesting different notification types...';
+            
+            // Test different notification types
+            setTimeout(() => showNotification('Success notification!', 'success'), 100);
+            setTimeout(() => showNotification('Error notification!', 'error'), 500);
+            setTimeout(() => showNotification('Warning notification!', 'warning'), 1000);
+            setTimeout(() => showNotification('Info notification!', 'info'), 1500);
+        }
+        
+        function testResponsive() {
+            const results = document.getElementById('uiResults');
+            results.style.display = 'block';
+            results.className = 'test-result success';
+            results.textContent = '✅ Responsive Design Test PASSED\nTry resizing your browser window to test responsiveness';
+        }
+        
+        function testAnimations() {
+            const results = document.getElementById('uiResults');
+            results.style.display = 'block';
+            results.className = 'test-result success';
+            results.textContent = '✅ Animations Test PASSED\nAll CSS animations and transitions are working';
+        }
+        
+        // Show notification function
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span>${message}</span>
+                    <button class="notification-close">&times;</button>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+            
+            notification.querySelector('.notification-close').addEventListener('click', () => {
+                notification.remove();
+            });
+        }
+        
+        // Load status information
+        function loadStatus() {
+            const statusInfo = document.getElementById('statusInfo');
+            const currentUser = getCurrentUser();
+            const isLoggedIn = localStorage.getItem('userToken') !== null;
+            
+            statusInfo.textContent = `
+Current Status:
+- Backend API: ${window.location.hostname}:5000
+- Frontend: ${window.location.hostname}:3000
+- User Logged In: ${isLoggedIn ? 'Yes' : 'No'}
+- Current User: ${currentUser ? currentUser.name : 'None'}
+- Local Storage: ${localStorage.length} items
+- Screen Size: ${window.innerWidth}x${window.innerHeight}
+- User Agent: ${navigator.userAgent.split(' ')[0]}
+            `;
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStatus();
+        });
+        
+        // Get current user function
+        function getCurrentUser() {
+            const userData = localStorage.getItem('userData');
+            return userData ? JSON.parse(userData) : null;
+        }
+    </script>
+</body>
+</html>

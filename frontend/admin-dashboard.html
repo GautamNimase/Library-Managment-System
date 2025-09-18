@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Library Management System</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/notifications.css">
+    <link rel="stylesheet" href="css/admin-dashboard.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+</head>
+<body class="admin-body">
+    <!-- Modern Sidebar Navigation -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <div class="admin-logo">
+                <i class="fas fa-shield-alt"></i>
+                <span>Admin Panel</span>
+            </div>
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <ul class="nav-list">
+                <li class="nav-item active">
+                    <a href="admin-dashboard.html" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showModal('manageUsersModal')">
+                        <i class="fas fa-users"></i>
+                        <span>Manage Users</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showModal('addBookModal')">
+                        <i class="fas fa-book-medical"></i>
+                        <span>Add Books</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showModal('loanManagementModal')">
+                        <i class="fas fa-exchange-alt"></i>
+                        <span>Loan Management</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showModal('reportsModal')">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Reports</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="adminLogout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <div class="admin-info">
+                <div class="admin-avatar">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <div class="admin-details">
+                    <span class="admin-name" id="adminName">Admin</span>
+                    <span class="admin-role">Administrator</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="admin-main">
+        <!-- Top Header -->
+        <header class="admin-topbar">
+            <div class="topbar-left">
+                <h1 class="page-title">Dashboard Overview</h1>
+                <p class="page-subtitle">Welcome back, <span id="adminNameTop">Admin</span>! Here's what's happening today.</p>
+            </div>
+            <div class="topbar-right">
+                <div class="topbar-actions">
+                    <button class="action-btn notification-btn" onclick="showNotifications()">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </button>
+                    <button class="action-btn settings-btn">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
+        </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+            <!-- Stats Overview -->
+            <div class="stats-overview">
+                <div class="stat-card animate__animated animate__fadeInUp" data-delay="100">
+                    <div class="stat-icon books-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="stat-content">
+                    <h3 id="totalBooks">1,247</h3>
+                        <p>Total Books</p>
+                        <span class="stat-change positive">+12 this week</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card animate__animated animate__fadeInUp" data-delay="200">
+                    <div class="stat-icon users-icon">
+                        <i class="fas fa-users"></i>
+                </div>
+                    <div class="stat-content">
+                    <h3 id="totalUsers">892</h3>
+                        <p>Active Users</p>
+                        <span class="stat-change positive">+8 this week</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card animate__animated animate__fadeInUp" data-delay="300">
+                    <div class="stat-icon loans-icon">
+                        <i class="fas fa-exchange-alt"></i>
+                </div>
+                    <div class="stat-content">
+                    <h3 id="activeLoans">156</h3>
+                        <p>Active Loans</p>
+                        <span class="stat-change neutral">No change</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card animate__animated animate__fadeInUp" data-delay="400">
+                    <div class="stat-icon overdue-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                    <div class="stat-content">
+                    <h3 id="overdueBooks">23</h3>
+                    <p>Overdue Books</p>
+                        <span class="stat-change negative">-3 this week</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions-section">
+                <h2 class="section-title">
+                    <i class="fas fa-bolt"></i>
+                    Quick Actions
+                </h2>
+                <div class="quick-actions-grid">
+                    <button class="action-card animate__animated animate__fadeInLeft" data-delay="100">
+                        <div class="action-icon">
+                            <i class="fas fa-plus-circle"></i>
+                        </div>
+                        <div class="action-content">
+                            <h4>Add New Book</h4>
+                            <p>Add a new book to the library collection</p>
+                        </div>
+                    </button>
+                    
+                    <button class="action-card animate__animated animate__fadeInLeft" data-delay="200">
+                        <div class="action-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <div class="action-content">
+                            <h4>Manage Users</h4>
+                            <p>View and manage user accounts</p>
+                        </div>
+                    </button>
+                    
+                    <button class="action-card animate__animated animate__fadeInLeft" data-delay="300">
+                        <div class="action-icon">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+                        <div class="action-content">
+                            <h4>Loan Management</h4>
+                            <p>Process book loans and returns</p>
+                        </div>
+                    </button>
+                    
+                    <button class="action-card animate__animated animate__fadeInLeft" data-delay="400">
+                        <div class="action-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="action-content">
+                            <h4>Reports</h4>
+                            <p>View analytics and reports</p>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Recent Activity & Charts -->
+            <div class="dashboard-grid">
+            <!-- Recent Activity -->
+                <div class="activity-section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-history"></i>
+                            Recent Activity
+                        </h2>
+                        <button class="view-all-btn">View All</button>
+                    </div>
+                    <div class="activity-list">
+                        <div class="activity-item animate__animated animate__fadeInRight" data-delay="100">
+                            <div class="activity-icon user-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h4>New User Registration</h4>
+                            <p>John Doe registered for library access</p>
+                            <span class="activity-time">2 minutes ago</span>
+                        </div>
+                    </div>
+                        
+                        <div class="activity-item animate__animated animate__fadeInRight" data-delay="200">
+                            <div class="activity-icon return-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h4>Book Returned</h4>
+                            <p>"The Great Gatsby" was returned by Jane Smith</p>
+                            <span class="activity-time">15 minutes ago</span>
+                        </div>
+                    </div>
+                        
+                        <div class="activity-item animate__animated animate__fadeInRight" data-delay="300">
+                            <div class="activity-icon alert-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h4>Overdue Alert</h4>
+                            <p>3 books are now overdue and need attention</p>
+                            <span class="activity-time">1 hour ago</span>
+                        </div>
+                    </div>
+                        
+                        <div class="activity-item animate__animated animate__fadeInRight" data-delay="400">
+                            <div class="activity-icon add-icon">
+                                <i class="fas fa-plus-circle"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h4>New Book Added</h4>
+                            <p>"1984" by George Orwell added to library collection</p>
+                            <span class="activity-time">2 hours ago</span>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+
+                <!-- System Status -->
+                <div class="status-section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-heartbeat"></i>
+                            System Status
+                        </h2>
+                    </div>
+                    <div class="status-grid">
+                        <div class="status-item">
+                            <div class="status-indicator online"></div>
+                            <div class="status-info">
+                                <h4>Database</h4>
+                                <p>All systems operational</p>
+                            </div>
+                        </div>
+                        
+                        <div class="status-item">
+                            <div class="status-indicator online"></div>
+                            <div class="status-info">
+                                <h4>API Services</h4>
+                                <p>Running smoothly</p>
+                            </div>
+                        </div>
+                        
+                        <div class="status-item">
+                            <div class="status-indicator warning"></div>
+                            <div class="status-info">
+                                <h4>Backup</h4>
+                                <p>Last backup: 2 hours ago</p>
+                            </div>
+                        </div>
+                        
+                        <div class="status-item">
+                            <div class="status-indicator online"></div>
+                            <div class="status-info">
+                                <h4>Security</h4>
+                                <p>All checks passed</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Notifications Modal -->
+    <div class="modal" id="notificationsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Notifications</h3>
+                <span class="close" onclick="closeNotifications()">&times;</span>
+                        </div>
+            <div class="modal-body" id="notificationsBody">
+                <div class="notification-item">
+                    <div class="notification-icon">
+                        <i class="fas fa-bell"></i>
+                        </div>
+                    <div class="notification-content">
+                        <h4>System Update Available</h4>
+                        <p>A new system update is available for installation.</p>
+                        <span class="notification-time">2 hours ago</span>
+                    </div>
+                        </div>
+                <div class="notification-item">
+                    <div class="notification-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                    <div class="notification-content">
+                        <h4>Overdue Books Alert</h4>
+                        <p>5 books are overdue and need immediate attention.</p>
+                        <span class="notification-time">4 hours ago</span>
+                    </div>
+                        </div>
+                <div class="notification-item">
+                    <div class="notification-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <div class="notification-content">
+                        <h4>New User Registration</h4>
+                        <p>3 new users have registered today.</p>
+                        <span class="notification-time">6 hours ago</span>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+    <!-- Add Book Modal -->
+    <div class="modal" id="addBookModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Book</h3>
+                <span class="close" onclick="closeModal('addBookModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="addBookForm">
+                    <div class="form-group">
+                        <label for="bookTitle">Book Title</label>
+                        <input type="text" id="bookTitle" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="bookAuthor">Author</label>
+                        <input type="text" id="bookAuthor" name="author" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="bookIsbn">ISBN</label>
+                        <input type="text" id="bookIsbn" name="isbn" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="bookCategory">Category</label>
+                        <select id="bookCategory" name="category" required>
+                            <option value="">Select Category</option>
+                            <option value="fiction">Fiction</option>
+                            <option value="non-fiction">Non-Fiction</option>
+                            <option value="science">Science</option>
+                            <option value="history">History</option>
+                            <option value="biography">Biography</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="bookCopies">Number of Copies</label>
+                        <input type="number" id="bookCopies" name="copies" min="1" value="1" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('addBookModal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Add Book</button>
+                    </div>
+                </form>
+                        </div>
+                        </div>
+                    </div>
+
+    <!-- Manage Users Modal -->
+    <div class="modal" id="manageUsersModal">
+        <div class="modal-content large-modal">
+            <div class="modal-header">
+                <h3>Manage Users</h3>
+                <span class="close" onclick="closeModal('manageUsersModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="users-toolbar">
+                    <div class="search-box">
+                        <input type="text" id="userSearch" placeholder="Search users...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <button class="btn btn-primary" onclick="showAddUserModal()">
+                        <i class="fas fa-plus"></i> Add User
+                    </button>
+                        </div>
+                <div class="users-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Join Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <tr data-user-id="1">
+                                <td>#001</td>
+                                <td>John Doe</td>
+                                <td>john@example.com</td>
+                                <td>Student</td>
+                                <td><span class="status-badge active">Active</span></td>
+                                <td>2024-01-15</td>
+                                <td>
+                                    <button class="btn-icon" title="Edit" onclick="editUser(1)"><i class="fas fa-edit"></i></button>
+                                    <button class="btn-icon" title="Delete" onclick="deleteUser(1)"><i class="fas fa-trash"></i></button>
+                                    <button class="btn-icon" title="View Details" onclick="viewUserDetails(1)"><i class="fas fa-eye"></i></button>
+                                </td>
+                            </tr>
+                            <tr data-user-id="2">
+                                <td>#002</td>
+                                <td>Jane Smith</td>
+                                <td>jane@example.com</td>
+                                <td>Faculty</td>
+                                <td><span class="status-badge active">Active</span></td>
+                                <td>2024-01-10</td>
+                                <td>
+                                    <button class="btn-icon" title="Edit" onclick="editUser(2)"><i class="fas fa-edit"></i></button>
+                                    <button class="btn-icon" title="Delete" onclick="deleteUser(2)"><i class="fas fa-trash"></i></button>
+                                    <button class="btn-icon" title="View Details" onclick="viewUserDetails(2)"><i class="fas fa-eye"></i></button>
+                                </td>
+                            </tr>
+                            <tr data-user-id="3">
+                                <td>#003</td>
+                                <td>Mike Johnson</td>
+                                <td>mike@example.com</td>
+                                <td>Student</td>
+                                <td><span class="status-badge inactive">Inactive</span></td>
+                                <td>2024-01-20</td>
+                                <td>
+                                    <button class="btn-icon" title="Edit" onclick="editUser(3)"><i class="fas fa-edit"></i></button>
+                                    <button class="btn-icon" title="Delete" onclick="deleteUser(3)"><i class="fas fa-trash"></i></button>
+                                    <button class="btn-icon" title="View Details" onclick="viewUserDetails(3)"><i class="fas fa-eye"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+    <!-- Add/Edit User Modal -->
+    <div class="modal" id="addUserModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="userModalTitle">Add New User</h3>
+                <span class="close" onclick="closeModal('addUserModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="userForm">
+                    <input type="hidden" id="userId" name="userId">
+                    <div class="form-group">
+                        <label for="userName">Full Name</label>
+                        <input type="text" id="userName" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userEmail">Email Address</label>
+                        <input type="email" id="userEmail" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userRole">Role</label>
+                        <select id="userRole" name="role" required>
+                            <option value="">Select Role</option>
+                            <option value="student">Student</option>
+                            <option value="faculty">Faculty</option>
+                            <option value="staff">Staff</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="userStatus">Status</label>
+                        <select id="userStatus" name="status" required>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="userPassword">Password</label>
+                        <input type="password" id="userPassword" name="password" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('addUserModal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="userSubmitBtn">Add User</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Details Modal -->
+    <div class="modal" id="userDetailsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>User Details</h3>
+                <span class="close" onclick="closeModal('userDetailsModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="user-details">
+                    <div class="user-avatar-large">
+                        <i class="fas fa-user"></i>
+                        </div>
+                    <div class="user-info">
+                        <h4 id="detailUserName">John Doe</h4>
+                        <p id="detailUserEmail">john@example.com</p>
+                        <p id="detailUserRole">Student</p>
+                        <p id="detailUserStatus">Active</p>
+                        <p id="detailUserJoinDate">Joined: 2024-01-15</p>
+                        </div>
+                    </div>
+                <div class="user-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Books Borrowed</span>
+                        <span class="stat-value" id="booksBorrowed">5</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Current Loans</span>
+                        <span class="stat-value" id="currentLoans">2</span>
+                        </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Overdue Books</span>
+                        <span class="stat-value" id="overdueBooks">0</span>
+                        </div>
+                    </div>
+                        </div>
+                        </div>
+                    </div>
+
+    <!-- Loan Management Modal -->
+    <div class="modal" id="loanManagementModal">
+        <div class="modal-content large-modal">
+            <div class="modal-header">
+                <h3>Loan Management</h3>
+                <span class="close" onclick="closeModal('loanManagementModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="loan-tabs">
+                    <button class="tab-btn active" onclick="switchTab('active-loans')">Active Loans</button>
+                    <button class="tab-btn" onclick="switchTab('overdue-loans')">Overdue Loans</button>
+                    <button class="tab-btn" onclick="switchTab('loan-history')">Loan History</button>
+                        </div>
+                <div class="tab-content" id="active-loans">
+                    <div class="loans-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Book</th>
+                                    <th>Issue Date</th>
+                                    <th>Due Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>John Doe</td>
+                                    <td>The Great Gatsby</td>
+                                    <td>2024-01-15</td>
+                                    <td>2024-02-15</td>
+                                    <td>
+                                        <button class="btn btn-success btn-sm" onclick="returnBook(1)">Return</button>
+                                        <button class="btn btn-warning btn-sm" onclick="renewBook(1)">Renew</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <!-- Reports Modal -->
+    <div class="modal" id="reportsModal">
+        <div class="modal-content large-modal">
+            <div class="modal-header">
+                <h3>Reports & Analytics</h3>
+                <span class="close" onclick="closeModal('reportsModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="reports-grid">
+                    <div class="report-card">
+                        <h4>Library Statistics</h4>
+                        <div class="report-content">
+                            <p>Total Books: 1,247</p>
+                            <p>Active Users: 892</p>
+                            <p>Books on Loan: 156</p>
+                            <p>Overdue Books: 23</p>
+                        </div>
+                        <button class="btn btn-primary">Generate Report</button>
+                </div>
+                    <div class="report-card">
+                        <h4>Popular Books</h4>
+                        <div class="report-content">
+                            <p>Most borrowed this month</p>
+                            <ul>
+                                <li>The Great Gatsby - 15 loans</li>
+                                <li>1984 - 12 loans</li>
+                                <li>To Kill a Mockingbird - 10 loans</li>
+                    </ul>
+                </div>
+                        <button class="btn btn-primary">Generate Report</button>
+                    </div>
+                    <div class="report-card">
+                        <h4>User Activity</h4>
+                        <div class="report-content">
+                            <p>New registrations: 8 this week</p>
+                            <p>Active borrowers: 156</p>
+                            <p>Average loan duration: 14 days</p>
+                </div>
+                        <button class="btn btn-primary">Generate Report</button>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content large-modal">
+            <div class="modal-header">
+                <h3>System Settings</h3>
+                <span class="close" onclick="closeModal('settingsModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="settings-tabs">
+                    <button class="tab-btn active" onclick="switchSettingsTab('general')">General</button>
+                    <button class="tab-btn" onclick="switchSettingsTab('notifications')">Notifications</button>
+                    <button class="tab-btn" onclick="switchSettingsTab('security')">Security</button>
+                    <button class="tab-btn" onclick="switchSettingsTab('appearance')">Appearance</button>
+                </div>
+
+                <!-- General Settings -->
+                <div class="tab-content active" id="general-settings">
+                    <div class="settings-section">
+                        <h4>Library Information</h4>
+                        <form id="libraryInfoForm">
+                            <div class="form-group">
+                                <label for="libraryName">Library Name</label>
+                                <input type="text" id="libraryName" name="libraryName" value="Central Library" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="libraryAddress">Address</label>
+                                <textarea id="libraryAddress" name="libraryAddress" rows="3">123 Library Street, City, State 12345</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="libraryPhone">Phone Number</label>
+                                <input type="tel" id="libraryPhone" name="libraryPhone" value="+1 (555) 123-4567">
+                            </div>
+                            <div class="form-group">
+                                <label for="libraryEmail">Email</label>
+                                <input type="email" id="libraryEmail" name="libraryEmail" value="info@centrallibrary.com">
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="settings-section">
+                        <h4>Loan Settings</h4>
+                        <form id="loanSettingsForm">
+                            <div class="form-group">
+                                <label for="loanDuration">Default Loan Duration (days)</label>
+                                <input type="number" id="loanDuration" name="loanDuration" value="14" min="1" max="365">
+                            </div>
+                            <div class="form-group">
+                                <label for="maxLoans">Maximum Loans per User</label>
+                                <input type="number" id="maxLoans" name="maxLoans" value="5" min="1" max="20">
+                            </div>
+                            <div class="form-group">
+                                <label for="renewalLimit">Maximum Renewals</label>
+                                <input type="number" id="renewalLimit" name="renewalLimit" value="2" min="0" max="10">
+                            </div>
+                            <div class="form-group">
+                                <label for="fineAmount">Daily Fine Amount ($)</label>
+                                <input type="number" id="fineAmount" name="fineAmount" value="0.50" min="0" step="0.01">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Notification Settings -->
+                <div class="tab-content" id="notifications-settings">
+                    <div class="settings-section">
+                        <h4>Email Notifications</h4>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h5>Overdue Book Reminders</h5>
+                                <p>Send email reminders for overdue books</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="overdueReminders" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h5>Due Date Notifications</h5>
+                                <p>Notify users before books are due</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="dueDateNotifications" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h5>New User Welcome</h5>
+                                <p>Send welcome email to new users</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="welcomeEmails" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h4>System Alerts</h4>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h5>Low Stock Alerts</h5>
+                                <p>Alert when book copies are running low</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="lowStockAlerts" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h5>System Maintenance</h5>
+                                <p>Notify about scheduled maintenance</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="maintenanceAlerts" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Settings -->
+                <div class="tab-content" id="security-settings">
+                    <div class="settings-section">
+                        <h4>Password Policy</h4>
+                        <form id="passwordPolicyForm">
+                            <div class="form-group">
+                                <label for="minPasswordLength">Minimum Password Length</label>
+                                <input type="number" id="minPasswordLength" name="minPasswordLength" value="8" min="6" max="20">
+                            </div>
+                            <div class="form-group">
+                                <label for="passwordExpiry">Password Expiry (days)</label>
+                                <input type="number" id="passwordExpiry" name="passwordExpiry" value="90" min="30" max="365">
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h5>Require Special Characters</h5>
+                                    <p>Passwords must contain special characters</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="requireSpecialChars" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="settings-section">
+                        <h4>Session Management</h4>
+                        <form id="sessionSettingsForm">
+                            <div class="form-group">
+                                <label for="sessionTimeout">Session Timeout (minutes)</label>
+                                <input type="number" id="sessionTimeout" name="sessionTimeout" value="30" min="5" max="480">
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h5>Remember Me</h5>
+                                    <p>Allow users to stay logged in</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="rememberMe" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Appearance Settings -->
+                <div class="tab-content" id="appearance-settings">
+                    <div class="settings-section">
+                        <h4>Theme Settings</h4>
+                        <div class="theme-options">
+                            <div class="theme-option">
+                                <input type="radio" id="theme-light" name="theme" value="light">
+                                <label for="theme-light" class="theme-label">
+                                    <div class="theme-preview light-theme"></div>
+                                    <span>Light Theme</span>
+                                </label>
+                            </div>
+                            <div class="theme-option">
+                                <input type="radio" id="theme-dark" name="theme" value="dark" checked>
+                                <label for="theme-dark" class="theme-label">
+                                    <div class="theme-preview dark-theme"></div>
+                                    <span>Dark Theme</span>
+                                </label>
+                            </div>
+                            <div class="theme-option">
+                                <input type="radio" id="theme-auto" name="theme" value="auto">
+                                <label for="theme-auto" class="theme-label">
+                                    <div class="theme-preview auto-theme"></div>
+                                    <span>Auto</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h4>Dashboard Preferences</h4>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h5>Compact Mode</h5>
+                                <p>Use compact layout for dashboard</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="compactMode">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h5>Show Animations</h5>
+                                <p>Enable smooth animations and transitions</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="showAnimations" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-actions">
+                    <button class="btn btn-secondary" onclick="resetSettings()">Reset to Default</button>
+                    <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/api-service.js"></script>
+    <script src="js/admin-dashboard.js"></script>
+</body>
+</html>
+
