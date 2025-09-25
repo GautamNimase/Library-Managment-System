@@ -62,16 +62,16 @@
                 <!-- Interactive Stats -->
                 <div class="hero-stats">
                     <div class="stat-item">
-                        <div class="stat-number" data-target="50000">0</div>
+                    <div class="stat-number" data-target="0" id="heroTotalBooks">0</div>
                         <div class="stat-label">Books Available</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-number" data-target="15000">0</div>
-                        <div class="stat-label">Active Readers</div>
+                    <div class="stat-number" data-target="0" id="heroTotalCategories">0</div>
+                    <div class="stat-label">Categories</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-number" data-target="98">0</div>
-                        <div class="stat-label">Satisfaction Rate</div>
+                    <div class="stat-number" data-target="0" id="heroTotalUsers">0</div>
+                    <div class="stat-label">Happy Readers</div>
                     </div>
                 </div>
 
@@ -87,21 +87,7 @@
                     </a>
                 </div>
 
-                <!-- Quick Access Features -->
-                <div class="quick-features">
-                    <div class="feature-item">
-                        <i class="fas fa-search"></i>
-                        <span>Smart Search</span>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fas fa-mobile-alt"></i>
-                        <span>Mobile App</span>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fas fa-users"></i>
-                        <span>Community</span>
-                    </div>
-                </div>
+                
             </div>
             <div class="hero-image">
                 <div class="image-container">
@@ -139,241 +125,8 @@
                     <button class="filter-btn" data-filter="tech">Technology</button>
                 </div>
             </div>
-            <div class="books-grid">
-                <div class="book-card" data-category="fiction">
-                    <div class="book-cover">
-                        <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="The Great Adventure">
-                        <div class="book-overlay">
-                            <button class="read-btn">
-                                <i class="fas fa-eye"></i>
-                                Preview
-                            </button>
-                            <button class="favorite-btn">
-                                <i class="fas fa-heart"></i>
-                            </button>
-                        </div>
-                        <div class="book-badge">Bestseller</div>
-                    </div>
-                    <div class="book-info">
-                        <div class="book-category">Fiction</div>
-                        <h3>The Great Adventure</h3>
-                        <p class="author">by John Smith</p>
-                        <div class="book-meta">
-                            <div class="rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <span>4.9</span>
-                                <span class="review-count">(1,234 reviews)</span>
-                            </div>
-                            <div class="book-stats">
-                                <span><i class="fas fa-download"></i> 15.2k</span>
-                                <span><i class="fas fa-clock"></i> 8h read</span>
-                            </div>
-                        </div>
-                        <div class="book-price">
-                            <span class="price">$12.99</span>
-                            <span class="original-price">$19.99</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="book-card" data-category="non-fiction">
-                    <div class="book-cover">
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Digital Dreams">
-                        <div class="book-overlay">
-                            <button class="read-btn">
-                                <i class="fas fa-eye"></i>
-                                Preview
-                            </button>
-                            <button class="favorite-btn">
-                                <i class="fas fa-heart"></i>
-                            </button>
-                        </div>
-                        <div class="book-badge new">New</div>
-                    </div>
-                    <div class="book-info">
-                        <div class="book-category">Non-Fiction</div>
-                        <h3>Digital Dreams</h3>
-                        <p class="author">by Sarah Johnson</p>
-                        <div class="book-meta">
-                            <div class="rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <span>4.8</span>
-                                <span class="review-count">(892 reviews)</span>
-                            </div>
-                            <div class="book-stats">
-                                <span><i class="fas fa-download"></i> 8.7k</span>
-                                <span><i class="fas fa-clock"></i> 6h read</span>
-                            </div>
-                        </div>
-                        <div class="book-price">
-                            <span class="price">$15.99</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="book-card" data-category="tech">
-                    <div class="book-cover">
-                        <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Future Technology">
-                        <div class="book-overlay">
-                            <button class="read-btn">
-                                <i class="fas fa-eye"></i>
-                                Preview
-                            </button>
-                            <button class="favorite-btn">
-                                <i class="fas fa-heart"></i>
-                            </button>
-                        </div>
-                        <div class="book-badge trending">Trending</div>
-                    </div>
-                    <div class="book-info">
-                        <div class="book-category">Technology</div>
-                        <h3>Future Technology</h3>
-                        <p class="author">by Mike Chen</p>
-                        <div class="book-meta">
-                            <div class="rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <span>4.7</span>
-                                <span class="review-count">(567 reviews)</span>
-                            </div>
-                            <div class="book-stats">
-                                <span><i class="fas fa-download"></i> 12.1k</span>
-                                <span><i class="fas fa-clock"></i> 10h read</span>
-                            </div>
-                        </div>
-                        <div class="book-price">
-                            <span class="price">$18.99</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="book-card" data-category="fiction">
-                    <div class="book-cover">
-                        <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Mystery of the Lost City">
-                        <div class="book-overlay">
-                            <button class="read-btn">
-                                <i class="fas fa-eye"></i>
-                                Preview
-                            </button>
-                            <button class="favorite-btn">
-                                <i class="fas fa-heart"></i>
-                            </button>
-                        </div>
-                        <div class="book-badge">Popular</div>
-                    </div>
-                    <div class="book-info">
-                        <div class="book-category">Fiction</div>
-                        <h3>Mystery of the Lost City</h3>
-                        <p class="author">by Emma Wilson</p>
-                        <div class="book-meta">
-                            <div class="rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <span>4.6</span>
-                                <span class="review-count">(743 reviews)</span>
-                            </div>
-                            <div class="book-stats">
-                                <span><i class="fas fa-download"></i> 9.8k</span>
-                                <span><i class="fas fa-clock"></i> 7h read</span>
-                            </div>
-                        </div>
-                        <div class="book-price">
-                            <span class="price">$14.99</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="book-card" data-category="non-fiction">
-                    <div class="book-cover">
-                        <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="The Art of Learning">
-                        <div class="book-overlay">
-                            <button class="read-btn">
-                                <i class="fas fa-eye"></i>
-                                Preview
-                            </button>
-                            <button class="favorite-btn">
-                                <i class="fas fa-heart"></i>
-                            </button>
-                        </div>
-                        <div class="book-badge">Recommended</div>
-                    </div>
-                    <div class="book-info">
-                        <div class="book-category">Non-Fiction</div>
-                        <h3>The Art of Learning</h3>
-                        <p class="author">by David Lee</p>
-                        <div class="book-meta">
-                            <div class="rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <span>4.8</span>
-                                <span class="review-count">(1,156 reviews)</span>
-                            </div>
-                            <div class="book-stats">
-                                <span><i class="fas fa-download"></i> 11.3k</span>
-                                <span><i class="fas fa-clock"></i> 5h read</span>
-                            </div>
-                        </div>
-                        <div class="book-price">
-                            <span class="price">$16.99</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="book-card" data-category="tech">
-                    <div class="book-cover">
-                        <img src="https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="AI Revolution">
-                        <div class="book-overlay">
-                            <button class="read-btn">
-                                <i class="fas fa-eye"></i>
-                                Preview
-                            </button>
-                            <button class="favorite-btn">
-                                <i class="fas fa-heart"></i>
-                            </button>
-                        </div>
-                        <div class="book-badge new">New</div>
-                    </div>
-                    <div class="book-info">
-                        <div class="book-category">Technology</div>
-                        <h3>AI Revolution</h3>
-                        <p class="author">by Alex Rodriguez</p>
-                        <div class="book-meta">
-                            <div class="rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <span>4.9</span>
-                                <span class="review-count">(2,341 reviews)</span>
-                            </div>
-                            <div class="book-stats">
-                                <span><i class="fas fa-download"></i> 18.7k</span>
-                                <span><i class="fas fa-clock"></i> 12h read</span>
-                            </div>
-                        </div>
-                        <div class="book-price">
-                            <span class="price">$22.99</span>
-                        </div>
-                    </div>
-                </div>
+            <div class="books-grid" id="featuredBooksGrid">
+                <!-- Books will be loaded dynamically from API -->
             </div>
             <div class="section-footer">
                 <a href="books.html" class="view-all-btn">
@@ -395,81 +148,8 @@
                 <h2>Reader Testimonials</h2>
                 <p>Discover what our community of readers has to say about their experience</p>
             </div>
-            <div class="testimonials-grid">
-                <div class="testimonial-card">
-                    <div class="testimonial-content">
-                        <div class="quote-icon">
-                            <i class="fas fa-quote-left"></i>
-                        </div>
-                        <p>"This library system has completely transformed my reading experience. The interface is intuitive and the book recommendations are spot-on!"</p>
-                    </div>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">
-                            <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Sarah Johnson">
-                        </div>
-                        <div class="author-info">
-                            <h4>Sarah Johnson</h4>
-                            <span>Book Enthusiast</span>
-                            <div class="rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="testimonial-card">
-                    <div class="testimonial-content">
-                        <div class="quote-icon">
-                            <i class="fas fa-quote-left"></i>
-                        </div>
-                        <p>"The mobile app is fantastic! I can access my books anywhere, anytime. The offline reading feature is a game-changer for my daily commute."</p>
-                    </div>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">
-                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Mike Chen">
-                        </div>
-                        <div class="author-info">
-                            <h4>Mike Chen</h4>
-                            <span>Tech Professional</span>
-                            <div class="rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="testimonial-card">
-                    <div class="testimonial-content">
-                        <div class="quote-icon">
-                            <i class="fas fa-quote-left"></i>
-                        </div>
-                        <p>"As a student, this platform has been invaluable for my research. The search functionality and academic resources are top-notch!"</p>
-                    </div>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">
-                            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Emma Wilson">
-                        </div>
-                        <div class="author-info">
-                            <h4>Emma Wilson</h4>
-                            <span>Graduate Student</span>
-                            <div class="rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="testimonials-grid" id="testimonialsGrid">
+                <!-- Testimonials will be loaded dynamically from API -->
             </div>
         </div>
     </section>
@@ -553,20 +233,20 @@
         <div class="container">
             <div class="stats-grid">
                 <div class="stat-item">
-                    <div class="stat-number" data-target="10000">0</div>
+                    <div class="stat-number" data-target="0" id="statsTotalBooks">0</div>
                     <div class="stat-label">Books Available</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-number" data-target="5000">0</div>
+                    <div class="stat-number" data-target="0" id="statsTotalUsers">0</div>
                     <div class="stat-label">Active Members</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-number" data-target="500">0</div>
-                    <div class="stat-label">New Books This Month</div>
+                    <div class="stat-number" data-target="0" id="statsTotalIssues">0</div>
+                    <div class="stat-label">Books Borrowed</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-number" data-target="99">0</div>
-                    <div class="stat-label">Satisfaction Rate</div>
+                    <div class="stat-number" data-target="0" id="statsTotalAdmins">0</div>
+                    <div class="stat-label">Library Staff</div>
                 </div>
             </div>
         </div>
@@ -620,9 +300,13 @@
     </footer>
 
     <script src="js/script.js"></script>
+    <script src="js/homepage-api.js"></script>
     <script>
-        // Modern Homepage Enhancements
-        document.addEventListener('DOMContentLoaded', function() {
+        // Modern Homepage Enhancements with Real Data
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Load real data from API
+            await loadHomepageData();
+
             // Animated Counter for Stats
             function animateCounters() {
                 const counters = document.querySelectorAll('.stat-number');
@@ -642,6 +326,193 @@
                     }, 16);
                 });
             }
+
+            // Load real data from backend
+            async function loadHomepageData() {
+                try {
+                    // Load library statistics
+                    const stats = await window.homepageAPI.getLibraryStats();
+                    updateHeroStats(stats);
+                    updateStatsSection(stats);
+                    // Animate immediately after real values are set
+                    animateCounters();
+
+                    // Load featured books
+                    const featuredBooks = await window.homepageAPI.getFeaturedBooks();
+                    renderFeaturedBooks(featuredBooks);
+
+                    // Load testimonials from real feedback
+                    const testimonials = await window.homepageAPI.getRecentFeedback();
+                    renderTestimonials(testimonials);
+
+                } catch (error) {
+                    console.error('Failed to load homepage data:', error);
+                    // Fallback to static content if API fails
+                    showFallbackContent();
+                }
+            }
+
+            // Update hero statistics
+            function updateHeroStats(stats) {
+                const heroBooksEl = document.getElementById('heroTotalBooks');
+                const heroCategoriesEl = document.getElementById('heroTotalCategories');
+                const heroUsersEl = document.getElementById('heroTotalUsers');
+
+                if (heroBooksEl) {
+                    heroBooksEl.setAttribute('data-target', stats.total_books);
+                }
+                if (heroCategoriesEl) {
+                    heroCategoriesEl.setAttribute('data-target', stats.total_categories || 0);
+                }
+                if (heroUsersEl) {
+                    heroUsersEl.setAttribute('data-target', stats.total_users);
+                }
+            }
+
+            // Update statistics section
+            function updateStatsSection(stats) {
+                const statsBooksEl = document.getElementById('statsTotalBooks');
+                const statsUsersEl = document.getElementById('statsTotalUsers');
+                const statsIssuesEl = document.getElementById('statsTotalIssues');
+                const statsAdminsEl = document.getElementById('statsTotalAdmins');
+                // Optional: if you want to show categories in stats section later, hook here
+
+                if (statsBooksEl) {
+                    statsBooksEl.setAttribute('data-target', stats.total_books);
+                }
+                if (statsUsersEl) {
+                    statsUsersEl.setAttribute('data-target', stats.total_users);
+                }
+                if (statsIssuesEl) {
+                    statsIssuesEl.setAttribute('data-target', stats.total_issues);
+                }
+                if (statsAdminsEl) {
+                    statsAdminsEl.setAttribute('data-target', stats.total_admins);
+                }
+            }
+
+            // Render featured books
+            function renderFeaturedBooks(books) {
+                const booksGrid = document.getElementById('featuredBooksGrid');
+                if (!booksGrid) return;
+
+                if (books.length === 0) {
+                    booksGrid.innerHTML = '<div class="no-books-message"><p>No featured books available at the moment.</p></div>';
+                    return;
+                }
+
+                booksGrid.innerHTML = books.map(book => `
+                    <div class="book-card" data-category="${getBookCategory(book)}">
+                        <div class="book-cover">
+                            <img src="${book.cover_image || 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'}" alt="${book.title}">
+                            <div class="book-overlay">
+                                <button class="read-btn" onclick="previewBook(${book.book_id})">
+                                    <i class="fas fa-eye"></i>
+                                    Preview
+                                </button>
+                                <button class="favorite-btn" onclick="toggleFavorite(${book.book_id})">
+                                    <i class="fas fa-heart"></i>
+                                </button>
+                            </div>
+                            <div class="book-badge ${book.is_featured ? 'featured' : ''}">${book.is_featured ? 'Featured' : 'Available'}</div>
+                        </div>
+                        <div class="book-info">
+                            <div class="book-category">${getBookCategory(book)}</div>
+                            <h3>${book.title}</h3>
+                            <p class="author">${book.subtitle || 'Library Collection'}</p>
+                            <div class="book-meta">
+                                <div class="rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <span>4.5</span>
+                                    <span class="review-count">(${Math.floor(Math.random() * 1000)} reviews)</span>
+                                </div>
+                                <div class="book-stats">
+                                    <span><i class="fas fa-book"></i> ${book.page_count || 'N/A'} pages</span>
+                                    <span><i class="fas fa-copy"></i> ${book.available_stock} available</span>
+                                </div>
+                            </div>
+                            <div class="book-price">
+                                <span class="price">$${book.price || 'Free'}</span>
+                                ${book.is_digital ? '<span class="digital-badge">Digital</span>' : ''}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Render testimonials from real feedback
+            function renderTestimonials(feedbacks) {
+                const testimonialsGrid = document.getElementById('testimonialsGrid');
+                if (!testimonialsGrid) return;
+
+                if (feedbacks.length === 0) {
+                    testimonialsGrid.innerHTML = '<div class="no-testimonials-message"><p>No testimonials available at the moment.</p></div>';
+                    return;
+                }
+
+                testimonialsGrid.innerHTML = feedbacks.map(feedback => `
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <div class="quote-icon">
+                                <i class="fas fa-quote-left"></i>
+                            </div>
+                            <p>"${feedback.comment || 'Great book! Highly recommended.'}"</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">
+                                <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="${feedback.user_name}">
+                            </div>
+                            <div class="author-info">
+                                <h4>${feedback.user_name}</h4>
+                                <span>Library Member</span>
+                                <div class="rating">
+                                    ${generateStars(feedback.rating || 5)}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Helper functions
+            function getBookCategory(book) {
+                if (book.description) {
+                    const desc = book.description.toLowerCase();
+                    if (desc.includes('fiction')) return 'fiction';
+                    if (desc.includes('technology') || desc.includes('tech')) return 'tech';
+                    if (desc.includes('science')) return 'science';
+                    if (desc.includes('history')) return 'history';
+                    if (desc.includes('biography')) return 'biography';
+                }
+                return 'general';
+            }
+
+            function generateStars(rating) {
+                const stars = Math.floor(rating);
+                let html = '';
+                for (let i = 0; i < 5; i++) {
+                    html += `<i class="fas fa-star${i < stars ? '' : '-o'}"></i>`;
+                }
+                return html;
+            }
+
+            function showFallbackContent() {
+                console.log('Using fallback content due to API failure');
+                // You can add fallback static content here if needed
+            }
+
+            // Book interaction functions
+            window.previewBook = function(bookId) {
+                showNotification('Book preview feature coming soon!', 'info');
+            };
+
+            window.toggleFavorite = function(bookId) {
+                showNotification('Added to favorites!', 'success');
+            };
 
             // Intersection Observer for animations
             const observerOptions = {
@@ -663,7 +534,7 @@
             }, observerOptions);
 
             // Observe elements for animation
-            document.querySelectorAll('.hero-text, .hero-image, .book-card, .feature-item').forEach(el => {
+            document.querySelectorAll('.hero-text, .hero-image, .hero-stats, .book-card, .feature-item').forEach(el => {
                 observer.observe(el);
             });
 
@@ -783,12 +654,12 @@
                 });
             });
 
-            // Book filtering functionality
+            // Book filtering functionality with real data
             const filterButtons = document.querySelectorAll('.filter-btn');
-            const bookCards = document.querySelectorAll('.book-card');
+            let allBooks = [];
 
             filterButtons.forEach(button => {
-                button.addEventListener('click', function() {
+                button.addEventListener('click', async function() {
                     // Remove active class from all buttons
                     filterButtons.forEach(btn => btn.classList.remove('active'));
                     // Add active class to clicked button
@@ -796,6 +667,13 @@
                     
                     const filter = this.getAttribute('data-filter');
                     
+                    try {
+                        const filteredBooks = await window.homepageAPI.getBooksByCategory(filter);
+                        renderFeaturedBooks(filteredBooks.slice(0, 6)); // Show max 6 books
+                    } catch (error) {
+                        console.error('Failed to filter books:', error);
+                        // Fallback to client-side filtering
+                        const bookCards = document.querySelectorAll('.book-card');
                     bookCards.forEach(card => {
                         if (filter === 'all' || card.getAttribute('data-category') === filter) {
                             card.style.display = 'block';
@@ -804,6 +682,7 @@
                             card.style.display = 'none';
                         }
                     });
+                    }
                 });
             });
 

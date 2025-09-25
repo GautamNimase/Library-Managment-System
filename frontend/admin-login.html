@@ -54,10 +54,7 @@
                     </div>
                 </button>
                 
-                <button type="button" class="skip-btn" onclick="skipAdminLogin()">
-                    <i class="fas fa-forward"></i>
-                    <span>Skip Login</span>
-                </button>
+                
                 
                 <div class="admin-features">
                     <h4>Admin Features</h4>
@@ -145,25 +142,7 @@
             }
         }
         
-        // Skip admin login functionality
-        function skipAdminLogin() {
-            // Store mock admin data for demo purposes
-            localStorage.setItem('adminToken', 'demo-admin-token-' + Date.now());
-            localStorage.setItem('adminData', JSON.stringify({
-                admin_id: 'demo-admin-001',
-                email: 'admin@demo.com',
-                name: 'Demo Admin',
-                role: 'admin',
-                skipLogin: true
-            }));
-            
-            showMessage('Skipping login... Redirecting to admin dashboard', 'success');
-            
-            // Redirect to admin dashboard
-            setTimeout(() => {
-                window.location.href = 'admin-dashboard.html';
-            }, 1000);
-        }
+        
     </script>
 </body>
 </html>

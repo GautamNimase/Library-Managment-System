@@ -1,5 +1,6 @@
 // Books Page JavaScript
-const booksData = [
+// Fallback mock data; real data will be fetched from backend
+const fallbackBooks = [
     {
         id: 1,
         title: "To Kill a Mockingbird",
@@ -110,20 +111,67 @@ const booksData = [
     }
 ];
 
-let currentBooks = [...booksData];
+let allBooks = [];
+let currentBooks = [];
 let currentPage = 1;
 const booksPerPage = 6;
 
 document.addEventListener('DOMContentLoaded', function() {
-    initializePage();
     setupEventListeners();
-    animateCounters();
+    loadHeroStats();
+    loadBooksFromApi();
 });
 
-function initializePage() {
+async function loadHeroStats() {
+    try {
+        const data = await window.apiService.makeRequest('/test/data');
+        const stats = data?.stats || {};
+        const booksEl = document.getElementById('booksHeroTotalBooks');
+        const catEl = document.getElementById('booksHeroTotalCategories');
+        const usersEl = document.getElementById('booksHeroTotalUsers');
+        if (booksEl) booksEl.setAttribute('data-target', Number(stats.total_books || 0));
+        if (catEl) catEl.setAttribute('data-target', Number(stats.total_categories || 0));
+        if (usersEl) usersEl.setAttribute('data-target', Number(stats.total_users || 0));
+        animateCounters();
+    } catch (e) {
+        console.warn('Failed to load hero stats', e);
+    }
+}
+
+async function loadBooksFromApi() {
+    try {
+        const data = await window.apiService.getBooks();
+        const rows = Array.isArray(data.books) ? data.books : [];
+    allBooks = rows.map(row => ({
+            id: row.book_id,
+            title: row.title,
+        author: (row.authors || row.author || ''),
+            category: 'general',
+            year: row.publication_date ? new Date(row.publication_date).getFullYear() : (row.year || ''),
+            publisher: row.publishers || '',
+            price: Number(row.price || 0).toFixed(2),
+            stock: (row.available_copies ?? row.available_stock ?? row.stock ?? 0),
+            rating: Number(row.average_rating || 0),
+            reviews: Number(row.total_reviews || 0),
+            downloads: 0,
+            readTime: '-',
+            image: row.cover_image || 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=400&q=80',
+            preview_url: row.digital_copy_url || '',
+            description: row.description || '',
+            badge: row.is_featured ? 'Featured' : (row.is_digital ? 'Digital' : 'Book'),
+            status: ((row.is_available === true) || ((row.available_copies ?? row.available_stock ?? 0) > 0)) ? 'available' : 'borrowed'
+        }));
+    } catch (e) {
+        console.warn('Falling back to mock books data', e);
+        allBooks = [...fallbackBooks];
+    }
+    currentBooks = [...allBooks];
+    currentPage = 1;
     displayBooks(currentBooks.slice(0, booksPerPage));
     updateLoadMoreButton();
 }
+
+function initializePage() {}
 
 function setupEventListeners() {
     const searchInput = document.getElementById('searchInput');
@@ -176,21 +224,25 @@ function createBookCard(book) {
                     <i class="fas fa-eye"></i>
                     <span>View Details</span>
                 </button>
+                <button class="read-btn" onclick="previewBook(${book.id})" style="margin-top:8px">
+                    <i class="fas fa-book-reader"></i>
+                    <span>Preview</span>
+                </button>
             </div>
             <div class="book-badge ${book.badge.toLowerCase().replace(' ', '-')}">${book.badge}</div>
         </div>
         <div class="book-info">
-            <div class="book-category">${book.category.charAt(0).toUpperCase() + book.category.slice(1)}</div>
-            <h3>${book.title}</h3>
-            <p class="author">by ${book.author}</p>
+            <div class="book-category">${(book.category||'general').toString().charAt(0).toUpperCase() + (book.category||'general').toString().slice(1)}</div>
+            <h3>${book.title || 'Untitled'}</h3>
+            <p class="author">${book.author ? 'by ' + book.author : ''}</p>
             <div class="book-meta">
                 <div class="rating">
                     ${generateStars(book.rating)}
                     <span>${book.rating}</span>
-                    <span class="review-count">(${book.reviews.toLocaleString()} reviews)</span>
+                    <span class="review-count">(${Number(book.reviews||0).toLocaleString()} reviews)</span>
                 </div>
                 <div class="book-stats">
-                    <span><i class="fas fa-download"></i> ${(book.downloads / 1000).toFixed(1)}k</span>
+                    <span><i class="fas fa-download"></i> ${((book.downloads||0) / 1000).toFixed(1)}k</span>
                     <span><i class="fas fa-clock"></i> ${book.readTime}</span>
                 </div>
             </div>
@@ -245,7 +297,7 @@ function filterBooks() {
     const sortBy = sortFilter.value;
     const availability = availabilityFilter.value;
     
-    let filteredBooks = [...booksData];
+    let filteredBooks = [...allBooks];
     
     if (searchTerm) {
         filteredBooks = filteredBooks.filter(book => 
@@ -338,7 +390,7 @@ function updateLoadMoreButton() {
 }
 
 function openBookModal(bookId) {
-    const book = booksData.find(b => b.id === bookId);
+    const book = (allBooks.find(b => b.id === bookId));
     if (!book) return;
     
     const bookModal = document.getElementById('bookModal');
@@ -371,6 +423,17 @@ function openBookModal(bookId) {
     const reviewCount = document.getElementById('reviewCount');
     if (reviewCount) reviewCount.textContent = book.reviews;
     
+    // Wire borrow button
+    const borrowBtn = document.getElementById('borrowBtn');
+    if (borrowBtn) {
+        borrowBtn.onclick = () => borrowBook(book.id);
+        borrowBtn.disabled = book.status !== 'available';
+    }
+
+    // Wire add review button visibility by login
+    const addReviewBtn = document.getElementById('addReviewBtn');
+    if (addReviewBtn) addReviewBtn.style.display = localStorage.getItem('userToken') ? 'inline-flex' : 'none';
+
     bookModal.classList.add('active');
     document.body.style.overflow = 'hidden';
 }
@@ -416,10 +479,10 @@ function handleReviewSubmit(e) {
         showNotification('Please fill in all fields', 'error');
         return;
     }
-    
+    submitReview(Number(document.getElementById('modalBookYear')?.textContent) || 0, Number(rating.value), text.value).catch(()=>{});
     showNotification('Thank you for your review!', 'success');
     closeReviewModalFunc();
-    
+
     const currentCount = parseInt(document.getElementById('reviewCount')?.textContent || '0');
     const reviewCount = document.getElementById('reviewCount');
     if (reviewCount) reviewCount.textContent = currentCount + 1;
@@ -471,3 +534,57 @@ function showNotification(message, type = 'info') {
 }
 
 window.openBookModal = openBookModal;
+window.previewBook = previewBook;
+
+// ---------------- Real actions ----------------
+async function borrowBook(bookId) {
+    try {
+        const token = localStorage.getItem('userToken');
+        if (!token) { showNotification('Please login to borrow books', 'error'); return; }
+        await window.apiService.issueBook(bookId, 30);
+        showNotification('Book issued successfully', 'success');
+        closeBookModal();
+    } catch (e) {
+        console.error('Borrow failed', e);
+        showNotification(e.message || 'Borrow failed', 'error');
+    }
+}
+
+async function submitReview(bookId, rating, comment) {
+    try {
+        const token = localStorage.getItem('userToken');
+        if (!token) { showNotification('Please login to add reviews', 'error'); return; }
+        await window.apiService.addFeedback(bookId, rating, comment || '');
+    } catch (e) {
+        console.warn('Add review failed', e);
+    }
+}
+
+// --------------- Preview support ---------------
+function previewBook(bookId) {
+    const book = allBooks.find(b => b.id === bookId) || fallbackBooks.find(b=>b.id===bookId);
+    const modal = document.getElementById('previewModal');
+    const frame = document.getElementById('previewFrame');
+    const unavailable = document.getElementById('previewUnavailable');
+    if (!modal || !frame || !unavailable) return;
+    const url = book?.preview_url || book?.digital_copy_url || book?.image || '';
+    if (url) {
+        frame.src = url;
+        frame.style.display = 'block';
+        unavailable.style.display = 'none';
+    } else {
+        frame.src = '';
+        frame.style.display = 'none';
+        unavailable.style.display = 'block';
+    }
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closePreview() {
+    const modal = document.getElementById('previewModal');
+    const frame = document.getElementById('previewFrame');
+    if (modal) modal.classList.remove('active');
+    if (frame) frame.src = '';
+    document.body.style.overflow = 'auto';
+}

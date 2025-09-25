@@ -278,17 +278,17 @@
 
 /* Top Bar */
 .top-bar {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding: var(--spacing-lg) var(--spacing-xl);
+    background: rgba(255,255,255,0.6);
+    backdrop-filter: saturate(180%) blur(14px);
+    border-bottom: 1px solid var(--border-light);
+    padding: 10px 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     position: sticky;
     top: 0;
     z-index: 100;
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.05);
 }
 
 .top-bar-left {
@@ -416,9 +416,9 @@
 }
 
 .page-title {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 700;
-    color: var(--text-primary);
+    color: #0f172a;
     margin: 0;
 }
 
@@ -461,22 +461,22 @@
 
 .notification-btn {
     position: relative;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    color: var(--text-secondary);
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    border: none;
+    color: #fff;
     width: 40px;
     height: 40px;
-    border-radius: var(--radius-lg);
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all var(--transition-fast);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .notification-btn:hover {
-    background: var(--primary-gradient);
-    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 16px rgba(99, 102, 241, 0.25);
 }
 
 .user-menu {
@@ -486,31 +486,30 @@
 .user-btn {
     display: flex;
     align-items: center;
-    gap: var(--spacing-sm);
-    padding: var(--spacing-sm) var(--spacing-md);
-    border: none;
-    background: var(--bg-secondary);
-    border-radius: var(--radius-lg);
+    gap: 8px;
+    padding: 6px 10px;
+    border: 1px solid var(--border-color);
+    background: #fff;
+    border-radius: 999px;
     cursor: pointer;
-    transition: all var(--transition-normal);
+    transition: box-shadow var(--transition-normal);
     position: relative;
 }
 
 .user-btn:hover {
-    background: var(--bg-hover);
-    box-shadow: var(--shadow-md);
+    box-shadow: 0 6px 18px rgba(0,0,0,.08);
 }
 
 .user-avatar {
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     background: linear-gradient(135deg, #667eea, #764ba2);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
 }
 
 .user-info {
@@ -2174,6 +2173,13 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: var(--spacing-lg);
+}
+
+/* Force 4 cards in one row on large screens */
+@media (min-width: 1200px) {
+    .stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
 }
 
 .stat-card {

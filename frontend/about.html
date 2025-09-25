@@ -92,51 +92,7 @@
         </div>
     </section>
 
-    <!-- Story Section -->
-    <section class="story-section">
-        <div class="container">
-            <div class="story-content">
-                <div class="story-text">
-                    <h2 class="section-title">Our Story</h2>
-                    <div class="story-timeline">
-                        <div class="timeline-item">
-                            <div class="timeline-year">2020</div>
-                            <div class="timeline-content">
-                                <h4>The Beginning</h4>
-                                <p>Started as a small project to digitize local library collections during the pandemic.</p>
-                            </div>
-                        </div>
-                        <div class="timeline-item">
-                            <div class="timeline-year">2021</div>
-                            <div class="timeline-content">
-                                <h4>Expansion</h4>
-                                <p>Partnered with 50+ libraries to create a unified digital platform.</p>
-                            </div>
-                        </div>
-                        <div class="timeline-item">
-                            <div class="timeline-year">2022</div>
-                            <div class="timeline-content">
-                                <h4>Innovation</h4>
-                                <p>Introduced AI-powered book recommendations and smart search features.</p>
-                            </div>
-                        </div>
-                        <div class="timeline-item">
-                            <div class="timeline-year">2024</div>
-                            <div class="timeline-content">
-                                <h4>Today</h4>
-                                <p>Serving over 100,000 users with access to millions of digital books.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="story-image">
-                    <div class="image-container">
-                        <i class="fas fa-rocket"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    
 
     <!-- Team Section -->
     <section class="team-section">
@@ -150,8 +106,8 @@
                     <div class="team-avatar">
                         <i class="fas fa-user"></i>
                     </div>
-                    <h3>Sarah Johnson</h3>
-                    <p class="team-role">CEO & Founder</p>
+                    <h3>Vaibhavi Warale</h3>
+                    <p class="team-role">Founder</p>
                     <p class="team-bio">Passionate about making education accessible to everyone through technology.</p>
                     <div class="team-social">
                         <a href="#"><i class="fab fa-linkedin"></i></a>
@@ -162,8 +118,8 @@
                     <div class="team-avatar">
                         <i class="fas fa-user"></i>
                     </div>
-                    <h3>Michael Chen</h3>
-                    <p class="team-role">CTO</p>
+                    <h3>Pranjal Narsale</h3>
+                    <p class="team-role">Founder</p>
                     <p class="team-bio">Leading our technical innovation with expertise in AI and machine learning.</p>
                     <div class="team-social">
                         <a href="#"><i class="fab fa-linkedin"></i></a>
@@ -174,8 +130,8 @@
                     <div class="team-avatar">
                         <i class="fas fa-user"></i>
                     </div>
-                    <h3>Emily Rodriguez</h3>
-                    <p class="team-role">Head of Design</p>
+                    <h3>Snehal Malpure</h3>
+                    <p class="team-role">Founder</p>
                     <p class="team-bio">Creating beautiful, intuitive experiences that users love.</p>
                     <div class="team-social">
                         <a href="#"><i class="fab fa-linkedin"></i></a>
@@ -231,19 +187,19 @@
         <div class="container">
             <div class="stats-grid">
                 <div class="stat-item">
-                    <div class="stat-number" data-target="100000">0</div>
+                    <div class="stat-number" data-target="0" id="aboutActiveUsers">0</div>
                     <div class="stat-label">Active Users</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-number" data-target="5000000">0</div>
+                    <div class="stat-number" data-target="0" id="aboutBooksAvailable">0</div>
                     <div class="stat-label">Books Available</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-number" data-target="500">0</div>
+                    <div class="stat-number" data-target="0" id="aboutPartnerLibraries">0</div>
                     <div class="stat-label">Partner Libraries</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-number" data-target="50">0</div>
+                    <div class="stat-number" data-target="0" id="aboutCountriesServed">0</div>
                     <div class="stat-label">Countries Served</div>
                 </div>
             </div>
@@ -319,5 +275,73 @@
     </footer>
 
     <script src="js/about.js?v=20241228"></script>
+    <script>
+        // Load real statistics from database
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadAboutStats();
+        });
+
+        async function loadAboutStats() {
+            try {
+                const response = await fetch('http://localhost:5000/api/test/data');
+                const data = await response.json();
+                const stats = data.stats || {};
+                
+                // Update stat targets with real data
+                const activeUsersEl = document.getElementById('aboutActiveUsers');
+                const booksAvailableEl = document.getElementById('aboutBooksAvailable');
+                const partnerLibrariesEl = document.getElementById('aboutPartnerLibraries');
+                const countriesServedEl = document.getElementById('aboutCountriesServed');
+                
+                if (activeUsersEl) {
+                    activeUsersEl.setAttribute('data-target', stats.total_users || 0);
+                }
+                if (booksAvailableEl) {
+                    booksAvailableEl.setAttribute('data-target', stats.total_books || 0);
+                }
+                if (partnerLibrariesEl) {
+                    // For now, use a calculated value based on books/users ratio
+                    const partnerLibraries = Math.max(1, Math.floor((stats.total_books || 0) / 1000));
+                    partnerLibrariesEl.setAttribute('data-target', partnerLibraries);
+                }
+                if (countriesServedEl) {
+                    // For now, use a calculated value based on users
+                    const countriesServed = Math.max(1, Math.floor((stats.total_users || 0) / 2000));
+                    countriesServedEl.setAttribute('data-target', countriesServed);
+                }
+                
+                // Animate counters
+                animateAboutCounters();
+                
+            } catch (error) {
+                console.error('Failed to load about stats:', error);
+                // Fallback to static values if API fails
+                animateAboutCounters();
+            }
+        }
+
+        function animateAboutCounters() {
+            const counters = document.querySelectorAll('.stats-section .stat-number');
+            
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target') || '0');
+                const duration = 2000;
+                const increment = target / (duration / 16);
+                let current = 0;
+                
+                const updateCounter = () => {
+                    current += increment;
+                    if (current < target) {
+                        counter.textContent = Math.floor(current).toLocaleString();
+                        requestAnimationFrame(updateCounter);
+                    } else {
+                        counter.textContent = target.toLocaleString();
+                    }
+                };
+                
+                updateCounter();
+            });
+        }
+    </script>
 </body>
 </html>

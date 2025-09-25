@@ -41,6 +41,12 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showMyBooks()">
+                        <i class="fas fa-book-open"></i>
+                        <span>My Books</span>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="#" class="nav-link" onclick="showUserProfile()">
                         <i class="fas fa-user"></i>
                         <span>Profile</span>
@@ -87,11 +93,6 @@
                 <button class="mobile-menu-toggle" id="mobileMenuToggle">
                     <i class="fas fa-bars"></i>
                 </button>
-                <div class="breadcrumb">
-                    <span class="breadcrumb-item" id="breadcrumbMain">LibraryMS</span>
-                    <i class="fas fa-chevron-right breadcrumb-separator"></i>
-                    <span class="breadcrumb-item active" id="breadcrumbCurrent">Dashboard</span>
-                </div>
                 <h1 class="page-title" id="pageTitle">Dashboard</h1>
             </div>
             
@@ -111,19 +112,7 @@
             </div>
             
             <div class="top-bar-right">
-                <div class="top-bar-actions">
-                    <button class="action-btn" onclick="showUserBooks()" title="Browse Books">
-                        <i class="fas fa-book"></i>
-                    </button>
-                    <button class="action-btn" onclick="showUserProfile()" title="My Profile">
-                        <i class="fas fa-user"></i>
-                    </button>
-                    <button class="action-btn" onclick="showUserHistory()" title="Reading History">
-                        <i class="fas fa-history"></i>
-                    </button>
-                </div>
-                
-                <button class="notification-btn" onclick="showNotifications()">
+                <button class="notification-btn" onclick="showNotifications()" title="Notifications">
                     <i class="fas fa-bell"></i>
                     <span class="notification-badge" id="topNotificationCount">3</span>
                 </button>
@@ -135,7 +124,7 @@
                         </div>
                         <div class="user-info">
                             <span class="user-name" id="topUserName">User</span>
-                            <span class="user-role">Member</span>
+                            <span class="user-role" id="topUserRole">Member</span>
                         </div>
                         <i class="fas fa-chevron-down"></i>
                     </button>
@@ -221,11 +210,6 @@
                                     <button class="btn-primary btn-glow" onclick="showQuickActions()">
                                         <i class="fas fa-rocket"></i>
                                         Quick Start
-                                    </button>
-                                    <button class="btn-secondary" onclick="showNotifications()">
-                                        <i class="fas fa-bell"></i>
-                                        Notifications
-                                        <span class="notification-badge" id="notificationCount">0</span>
                                     </button>
             </div>
         </div>
@@ -500,15 +484,6 @@
                     <!-- Search and Filter -->
                     <div class="search-filter-section">
                         <div class="container">
-                            <div class="search-bar">
-                                <div class="search-input-group">
-                                    <i class="fas fa-search"></i>
-                                    <input type="text" id="searchInput" placeholder="Search books, authors, or genres...">
-                                    <button class="search-btn" onclick="searchBooks()">
-                            <i class="fas fa-search"></i>
-                                    </button>
-                                </div>
-                            </div>
                             <div class="filter-buttons">
                                 <button class="filter-btn active" data-filter="all" onclick="filterBooks('all')">All</button>
                                 <button class="filter-btn" data-filter="fiction" onclick="filterBooks('fiction')">Fiction</button>
@@ -544,6 +519,29 @@
                                     <i class="fas fa-plus"></i>
                                     <span>Load More Books</span>
                                 </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- My Books Section -->
+            <section class="content-section" id="myBooksSection">
+                <div class="page-content">
+                    <div class="container">
+                        <div class="page-header">
+                            <h1 class="page-title">My Books</h1>
+                            <p class="page-subtitle">Your currently issued and returned books</p>
+                        </div>
+
+                        <div class="section-header" style="margin-top:10px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between">
+                            <h2 class="section-title" style="margin:0;font-size:1.25rem;display:flex;align-items:center;gap:8px"><i class="fas fa-book-reader"></i> My Books</h2>
+                            <div style="font-size:.9rem;color:#64748b" id="myBooksCount"></div>
+                        </div>
+                        <div class="books-grid" id="myBooksGrid">
+                            <div class="loading-state">
+                                <div class="loading-spinner"></div>
+                                <p>Loading your books...</p>
                             </div>
                         </div>
                     </div>
@@ -614,16 +612,7 @@
                                     <div class="profile-info">
                                         <h2 id="profileUserName">User Name</h2>
                                         <p id="profileUserEmail">user@example.com</p>
-                                        <div class="profile-badges">
-                                            <span class="badge member-badge">
-                                                <i class="fas fa-crown"></i>
-                                                Premium Member
-                                            </span>
-                                            <span class="badge level-badge">
-                                                <i class="fas fa-trophy"></i>
-                                                Level 5 Reader
-                                            </span>
-                                        </div>
+                                        
                                     </div>
                                 </div>
                                 
@@ -652,36 +641,12 @@
                                                 <i class="fas fa-phone"></i>
                                                 <span>Phone</span>
                                             </div>
-                                            <span class="detail-value">+1 (555) 123-4567</span>
+                                            <span class="detail-value" id="profileUserPhone"></span>
                                         </div>
                                     </div>
 
                                     <div class="detail-section">
-                                        <h3 class="section-title">
-                                            <i class="fas fa-chart-line"></i>
-                                            Reading Statistics
-                                        </h3>
-                                        <div class="detail-item">
-                                            <div class="detail-label">
-                            <i class="fas fa-book"></i>
-                                                <span>Favorite Genre</span>
-                                            </div>
-                                            <span class="detail-value">Fiction</span>
-                                        </div>
-                                        <div class="detail-item">
-                                            <div class="detail-label">
-                                                <i class="fas fa-clock"></i>
-                                                <span>Average Reading Time</span>
-                                            </div>
-                                            <span class="detail-value">2.5 hours/day</span>
-                                        </div>
-                                        <div class="detail-item">
-                                            <div class="detail-label">
-                                                <i class="fas fa-star"></i>
-                                                <span>Average Rating Given</span>
-                                            </div>
-                                            <span class="detail-value">4.2/5.0</span>
-                                        </div>
+                                        
                                     </div>
                                 </div>
                                 
@@ -690,14 +655,7 @@
                                         <i class="fas fa-edit"></i>
                                         Edit Profile
                                     </button>
-                                    <button class="btn-secondary" onclick="showReadingHistory()">
-                                        <i class="fas fa-history"></i>
-                                        Reading History
-                                    </button>
-                                    <button class="btn-secondary" onclick="showAchievements()">
-                                        <i class="fas fa-medal"></i>
-                                        Achievements
-                                    </button>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -925,6 +883,39 @@
     <!-- Toast Notifications -->
     <div id="toastContainer" class="toast-container"></div>
 
+    <!-- Book Preview Modal -->
+    <div class="modal" id="previewModal" style="display:none">
+        <div class="modal-content" style="padding:0;border-radius:16px;overflow:hidden">
+            <div class="modal-header" style="padding:16px 20px;border-bottom:1px solid #e5e7eb;background:#f8fafc">
+                <h3 id="pvTitle" style="margin:0;font-size:1.25rem;color:#111827">Book Details</h3>
+                <span class="close" onclick="closeDashboardPreview()">&times;</span>
+            </div>
+            <div class="modal-body" id="pvBody" style="padding:0">
+                <div class="pv-wrap" style="padding:20px">
+                    <div class="pv-hero" style="display:flex;gap:16px;align-items:flex-start">
+                        <div class="pv-cover" style="width:72px;height:96px;border-radius:10px;background:linear-gradient(135deg,#4f46e5,#06b6d4);display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 8px 24px rgba(79,70,229,0.3)">
+                            <i class="fas fa-book" style="font-size:28px"></i>
+                        </div>
+                        <div class="pv-head" style="flex:1">
+                            <h2 id="pvTitleText" style="margin:0 0 6px 0;font-size:1.5rem;color:#0f172a"></h2>
+                            <p id="pvAuthors" style="margin:0 0 10px 0;color:#64748b"></p>
+                            <div class="pv-badges" style="display:flex;flex-wrap:wrap;gap:8px">
+                                <span id="pvAvailBadge" class="badge" style="padding:6px 10px;border-radius:999px;background:#ecfeff;color:#0e7490;font-weight:600"></span>
+                                <span class="badge" style="padding:6px 10px;border-radius:999px;background:#eef2ff;color:#3730a3"><strong>ISBN</strong> <span id="pvIsbn" style="margin-left:6px"></span></span>
+                                <span class="badge" style="padding:6px 10px;border-radius:999px;background:#fef3c7;color:#92400e"><i class="fas fa-dollar-sign"></i> <span id="pvPrice"></span></span>
+                                <span class="badge" style="padding:6px 10px;border-radius:999px;background:#f1f5f9;color:#334155"><i class="fas fa-map-marker-alt"></i> <span id="pvLocation" style="margin-left:4px"></span></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pv-desc" style="margin-top:16px;border-top:1px solid #e5e7eb;padding-top:14px">
+                        <h4 style="margin:0 0 8px 0;color:#0f172a">Description</h4>
+                        <p id="pvDesc" style="margin:0;color:#475569;line-height:1.55"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Book Details Modal -->
     <div class="modal" id="bookDetailsModal">
         <div class="modal-content large-modal">
@@ -1026,6 +1017,6 @@
     </footer>
 
     <script src="js/api-service.js"></script>
-    <script src="js/modern-dashboard.js"></script>
+    <script src="js/dashboard.js"></script>
 </body>
 </html>

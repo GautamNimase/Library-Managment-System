@@ -232,6 +232,9 @@ def admin_register():
         
         admin_id = cursor.lastrowid
         
+        # Persist the new admin to the database
+        connection.commit()
+        
         # Generate JWT token
         token = jwt.encode({
             'admin_id': admin_id,
@@ -582,7 +585,7 @@ def get_user_issues(current_user_id, user_id):
                 i.issue_id,
                 i.book_id,
                 b.title,
-                b.authors,
+                GROUP_CONCAT(a.name SEPARATOR ', ') AS authors,
                 i.issue_date,
                 i.return_date,
                 i.due_date,
@@ -590,7 +593,10 @@ def get_user_issues(current_user_id, user_id):
                 i.fine
             FROM issues i
             JOIN books b ON i.book_id = b.book_id
+            LEFT JOIN book_authors ba ON b.book_id = ba.book_id
+            LEFT JOIN authors a ON ba.author_id = a.author_id
             WHERE i.user_id = %s
+            GROUP BY i.issue_id, i.book_id, b.title, i.issue_date, i.return_date, i.due_date, i.status, i.fine
             ORDER BY i.issue_date DESC
         """, (user_id,))
         
@@ -652,6 +658,84 @@ def add_feedback(current_user_id):
             'feedback_id': feedback_id
         }), 201
         
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
+
+# ---------------- User self-service routes -----------------
+@app.route('/api/user/me', methods=['GET'])
+@token_required
+def get_me(current_user_id):
+    """Return current user's profile from DB"""
+    try:
+        connection = get_db_connection()
+        if not connection:
+            return jsonify({'message': 'Database connection failed'}), 500
+        cursor = connection.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT user_id, name, email, phone, created_at, is_active, membership_type
+            FROM users
+            WHERE user_id = %s
+        """, (current_user_id,))
+        user = cursor.fetchone()
+        cursor.close(); connection.close()
+        if not user:
+            return jsonify({'message': 'User not found'}), 404
+        # Format
+        user['created_at'] = user['created_at'].strftime('%Y-%m-%d') if user.get('created_at') else None
+        user['status'] = 'active' if user.get('is_active') else 'inactive'
+        return jsonify({'user': user}), 200
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
+
+
+@app.route('/api/user/me', methods=['PUT'])
+@token_required
+def update_me(current_user_id):
+    """Update current user's basic profile"""
+    try:
+        data = request.get_json() or {}
+        name = data.get('name')
+        email = data.get('email')
+        phone = data.get('phone')
+        new_password = data.get('password')
+
+        if not any([name, email, phone, new_password]):
+            return jsonify({'message': 'No fields to update'}), 400
+
+        connection = get_db_connection()
+        if not connection:
+            return jsonify({'message': 'Database connection failed'}), 500
+        cursor = connection.cursor(dictionary=True)
+
+        # If email is changing ensure unique
+        if email:
+            cursor.execute("SELECT user_id FROM users WHERE email = %s AND user_id <> %s", (email, current_user_id))
+            if cursor.fetchone():
+                cursor.close(); connection.close()
+                return jsonify({'message': 'Email already in use'}), 409
+
+        # Build dynamic update
+        fields = []
+        values = []
+        if name is not None:
+            fields.append('name = %s'); values.append(name)
+        if email is not None:
+            fields.append('email = %s'); values.append(email)
+        if phone is not None:
+            fields.append('phone = %s'); values.append(phone)
+        if new_password:
+            hashed = hashpw(new_password.encode('utf-8'), gensalt()).decode('utf-8')
+            fields.append('password = %s'); values.append(hashed)
+
+        if not fields:
+            cursor.close(); connection.close()
+            return jsonify({'message': 'No fields to update'}), 400
+
+        values.append(current_user_id)
+        cursor.execute(f"UPDATE users SET {', '.join(fields)} WHERE user_id = %s", values)
+        connection.commit()
+        cursor.close(); connection.close()
+        return jsonify({'message': 'Profile updated successfully'}), 200
     except Exception as e:
         return jsonify({'message': str(e)}), 500
 
@@ -776,6 +860,66 @@ def mark_notification_read(current_user_id, notification_id):
     except Exception as e:
         return jsonify({'message': str(e)}), 500
 
+@app.route('/api/notifications/user/<int:user_id>/read-all', methods=['PUT'])
+@token_required
+def mark_all_notifications_read(current_user_id, user_id):
+    """Mark all notifications for a user as read"""
+    try:
+        if current_user_id != user_id:
+            return jsonify({'message': 'Access denied'}), 403
+
+        connection = get_db_connection()
+        if not connection:
+            return jsonify({'message': 'Database connection failed'}), 500
+
+        cursor = connection.cursor()
+        cursor.execute("UPDATE notifications SET is_read = TRUE WHERE user_id = %s", (user_id,))
+        connection.commit()
+        cursor.close(); connection.close()
+        return jsonify({'message': 'All notifications marked as read'}), 200
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
+
+@app.route('/api/notifications/<int:notification_id>', methods=['DELETE'])
+@token_required
+def delete_notification(current_user_id, notification_id):
+    """Delete a single notification that belongs to the current user"""
+    try:
+        connection = get_db_connection()
+        if not connection:
+            return jsonify({'message': 'Database connection failed'}), 500
+        cursor = connection.cursor()
+        # Ensure it belongs to current user
+        cursor.execute("SELECT user_id FROM notifications WHERE notification_id = %s", (notification_id,))
+        row = cursor.fetchone()
+        if not row or row[0] != current_user_id:
+            cursor.close(); connection.close()
+            return jsonify({'message': 'Notification not found or access denied'}), 404
+        cursor.execute("DELETE FROM notifications WHERE notification_id = %s", (notification_id,))
+        connection.commit()
+        cursor.close(); connection.close()
+        return jsonify({'message': 'Notification deleted'}), 200
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
+
+@app.route('/api/notifications/user/<int:user_id>', methods=['DELETE'])
+@token_required
+def delete_all_notifications(current_user_id, user_id):
+    """Delete all notifications for the current user"""
+    try:
+        if current_user_id != user_id:
+            return jsonify({'message': 'Access denied'}), 403
+        connection = get_db_connection()
+        if not connection:
+            return jsonify({'message': 'Database connection failed'}), 500
+        cursor = connection.cursor()
+        cursor.execute("DELETE FROM notifications WHERE user_id = %s", (user_id,))
+        connection.commit()
+        cursor.close(); connection.close()
+        return jsonify({'message': 'All notifications cleared'}), 200
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
+
 # Admin Routes
 @app.route('/api/admin/books', methods=['POST'])
 @admin_required
@@ -784,28 +928,63 @@ def add_book():
     try:
         data = request.get_json()
         title = data.get('title')
-        authors = data.get('authors')
-        publishers = data.get('publishers')
-        year = data.get('year')
-        price = data.get('price')
-        stock = data.get('stock', 0)
+        authors = data.get('authors')  # string, may be comma-separated
+        category_or_publisher = data.get('publishers')  # UI sends category label here
+        price = data.get('price', 0)
+        stock = int(data.get('stock', 0) or 0)
         
-        if not all([title, authors]):
-            return jsonify({'message': 'Title and authors required'}), 400
+        if not title:
+            return jsonify({'message': 'Title required'}), 400
         
         connection = get_db_connection()
         if not connection:
             return jsonify({'message': 'Database connection failed'}), 500
         
-        cursor = connection.cursor()
+        cursor = connection.cursor(dictionary=True)
         
+        # Insert into enhanced books table (no authors column). available_stock mirrors stock.
         cursor.execute(
-            "INSERT INTO books (title, authors, publishers, year, price, stock) VALUES (%s, %s, %s, %s, %s, %s)",
-            (title, authors, publishers, year, price, stock)
+            """
+            INSERT INTO books (title, price, stock, available_stock, is_active)
+            VALUES (%s, %s, %s, %s, TRUE)
+            """,
+            (title, price or 0, stock, stock)
         )
         
         connection.commit()
         book_id = cursor.lastrowid
+
+        # Optionally create author(s) and mapping
+        if authors:
+            for author_name in [a.strip() for a in authors.split(',') if a.strip()]:
+                cursor.execute("SELECT author_id FROM authors WHERE name = %s", (author_name,))
+                row = cursor.fetchone()
+                if row:
+                    author_id = row['author_id']
+                else:
+                    cursor.execute("INSERT INTO authors (name) VALUES (%s)", (author_name,))
+                    author_id = cursor.lastrowid
+                # Map
+                cursor.execute(
+                    "INSERT IGNORE INTO book_authors (book_id, author_id) VALUES (%s, %s)",
+                    (book_id, author_id)
+                )
+
+        # Optionally create category and mapping (using incoming 'publishers' value as category label from UI)
+        if category_or_publisher:
+            cursor.execute("SELECT category_id FROM categories WHERE name = %s", (category_or_publisher,))
+            row = cursor.fetchone()
+            if row:
+                category_id = row['category_id']
+            else:
+                cursor.execute("INSERT INTO categories (name) VALUES (%s)", (category_or_publisher,))
+                category_id = cursor.lastrowid
+            cursor.execute(
+                "INSERT IGNORE INTO book_categories (book_id, category_id) VALUES (%s, %s)",
+                (book_id, category_id)
+            )
+        
+        connection.commit()
         
         cursor.close()
         connection.close()
@@ -1124,6 +1303,13 @@ def get_test_data():
         cursor.execute("SELECT COUNT(*) as total_books FROM books")
         stats['total_books'] = cursor.fetchone()['total_books']
         
+        # Total categories
+        try:
+            cursor.execute("SELECT COUNT(*) as total_categories FROM categories")
+            stats['total_categories'] = cursor.fetchone()['total_categories']
+        except Exception:
+            stats['total_categories'] = 0
+
         cursor.execute("SELECT COUNT(*) as total_users FROM users")
         stats['total_users'] = cursor.fetchone()['total_users']
         

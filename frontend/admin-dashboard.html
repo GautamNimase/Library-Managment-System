@@ -46,10 +46,17 @@
                         <span>Add Books</span>
                     </a>
                 </li>
+                
                 <li class="nav-item">
-                    <a href="#" class="nav-link" onclick="showModal('loanManagementModal')">
-                        <i class="fas fa-exchange-alt"></i>
-                        <span>Loan Management</span>
+                    <a href="#" class="nav-link" onclick="showModal('billsModal')">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <span>Bills & Fines</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showModal('overdueBooksModal')">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>Overdue Books</span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -177,15 +184,7 @@
                         </div>
                     </button>
                     
-                    <button class="action-card animate__animated animate__fadeInLeft" data-delay="300">
-                        <div class="action-icon">
-                            <i class="fas fa-book-open"></i>
-                        </div>
-                        <div class="action-content">
-                            <h4>Loan Management</h4>
-                            <p>Process book loans and returns</p>
-                        </div>
-                    </button>
+                    
                     
                     <button class="action-card animate__animated animate__fadeInLeft" data-delay="400">
                         <div class="action-icon">
@@ -553,49 +552,7 @@
                         </div>
                     </div>
 
-    <!-- Loan Management Modal -->
-    <div class="modal" id="loanManagementModal">
-        <div class="modal-content large-modal">
-            <div class="modal-header">
-                <h3>Loan Management</h3>
-                <span class="close" onclick="closeModal('loanManagementModal')">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div class="loan-tabs">
-                    <button class="tab-btn active" onclick="switchTab('active-loans')">Active Loans</button>
-                    <button class="tab-btn" onclick="switchTab('overdue-loans')">Overdue Loans</button>
-                    <button class="tab-btn" onclick="switchTab('loan-history')">Loan History</button>
-                        </div>
-                <div class="tab-content" id="active-loans">
-                    <div class="loans-table">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>User</th>
-                                    <th>Book</th>
-                                    <th>Issue Date</th>
-                                    <th>Due Date</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>John Doe</td>
-                                    <td>The Great Gatsby</td>
-                                    <td>2024-01-15</td>
-                                    <td>2024-02-15</td>
-                                    <td>
-                                        <button class="btn btn-success btn-sm" onclick="returnBook(1)">Return</button>
-                                        <button class="btn btn-warning btn-sm" onclick="renewBook(1)">Renew</button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    
 
     <!-- Reports Modal -->
     <div class="modal" id="reportsModal">
@@ -609,33 +566,31 @@
                     <div class="report-card">
                         <h4>Library Statistics</h4>
                         <div class="report-content">
-                            <p>Total Books: 1,247</p>
-                            <p>Active Users: 892</p>
-                            <p>Books on Loan: 156</p>
-                            <p>Overdue Books: 23</p>
+                            <p>Total Books: <span id="libTotalBooks">-</span></p>
+                            <p>Active Users: <span id="libActiveUsers">-</span></p>
+                            <p>Books on Loan: <span id="libBooksOnLoan">-</span></p>
+                            <p>Overdue Books: <span id="libOverdueBooks">-</span></p>
                         </div>
-                        <button class="btn btn-primary">Generate Report</button>
+                        <button class="btn btn-primary" id="generateLibraryStatsReportBtn">Generate Report</button>
                 </div>
                     <div class="report-card">
                         <h4>Popular Books</h4>
                         <div class="report-content">
                             <p>Most borrowed this month</p>
-                            <ul>
-                                <li>The Great Gatsby - 15 loans</li>
-                                <li>1984 - 12 loans</li>
-                                <li>To Kill a Mockingbird - 10 loans</li>
-                    </ul>
+                            <ul id="popularBooksList">
+                                <li>Loading...</li>
+                            </ul>
                 </div>
-                        <button class="btn btn-primary">Generate Report</button>
+                        <button class="btn btn-primary" id="generatePopularBooksReportBtn">Generate Report</button>
                     </div>
                     <div class="report-card">
                         <h4>User Activity</h4>
                         <div class="report-content">
-                            <p>New registrations: 8 this week</p>
-                            <p>Active borrowers: 156</p>
-                            <p>Average loan duration: 14 days</p>
+                            <p>New registrations: <span id="newRegistrations">-</span> this week</p>
+                            <p>Active borrowers: <span id="activeBorrowers">-</span></p>
+                            <p>Average loan duration: <span id="avgLoanDays">-</span> days</p>
                 </div>
-                        <button class="btn btn-primary">Generate Report</button>
+                        <button class="btn btn-primary" id="generateUserActivityReportBtn">Generate Report</button>
                     </div>
                 </div>
             </div>
@@ -870,6 +825,116 @@
                     <button class="btn btn-secondary" onclick="resetSettings()">Reset to Default</button>
                     <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
             </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bills & Fines Modal -->
+    <div class="modal" id="billsModal">
+        <div class="modal-content large-modal">
+            <div class="modal-header">
+                <h3>Bills & Fines</h3>
+                <span class="close" onclick="closeModal('billsModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="loan-tabs">
+                    <button class="tab-btn active" onclick="switchBillsTab('active-bills', this)">Active Bills</button>
+                    <button class="tab-btn" onclick="switchBillsTab('overdue-bills', this)">Overdue Bills</button>
+                    <button class="tab-btn" onclick="switchBillsTab('paid-bills', this)">Paid Bills</button>
+                    <button class="tab-btn" onclick="switchBillsTab('bills-history', this)">Bills History</button>
+                </div>
+                <div class="tab-content" id="active-bills">
+                    <div class="loans-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Book</th>
+                                    <th>Issue Date</th>
+                                    <th>Due Date</th>
+                                    <th>Fine</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="tab-content" id="overdue-bills" style="display:none">
+                    <div class="loans-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Book</th>
+                                    <th>Issue Date</th>
+                                    <th>Due Date</th>
+                                    <th>Fine</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="tab-content" id="paid-bills" style="display:none">
+                    <div class="loans-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Book</th>
+                                    <th>Issue Date</th>
+                                    <th>Due Date</th>
+                                    <th>Fine</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="tab-content" id="bills-history" style="display:none">
+                    <div class="loans-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Book</th>
+                                    <th>Issue Date</th>
+                                    <th>Due Date</th>
+                                    <th>Status</th>
+                                    <th>Fine</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overdue Books Modal -->
+    <div class="modal" id="overdueBooksModal">
+        <div class="modal-content large-modal">
+            <div class="modal-header">
+                <h3>Overdue Books</h3>
+                <span class="close" onclick="closeModal('overdueBooksModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="loans-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Book</th>
+                                <th>Issue Date</th>
+                                <th>Due Date</th>
+                                <th>Days Overdue</th>
+                                <th>Fine</th>
+                            </tr>
+                        </thead>
+                        <tbody id="overdueBooksTableBody"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

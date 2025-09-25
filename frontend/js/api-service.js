@@ -1,14 +1,27 @@
 // API Service for Library Management System
 class APIService {
     constructor() {
-        this.baseURL = 'http://localhost:5000/api';
-        this.token = localStorage.getItem('authToken');
+        const host = window.location.hostname || 'localhost';
+        this.baseURL = `http://${host}:5000/api`;
+        // Prefer user token for user-facing pages
+        this.token = localStorage.getItem('userToken') || localStorage.getItem('adminToken') || localStorage.getItem('authToken');
     }
 
     // Set authentication token
     setToken(token) {
         this.token = token;
         localStorage.setItem('authToken', token);
+        // Also mirror to role-specific keys when possible so other code paths work
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1] || 'e30='));
+            if (payload && payload.role === 'admin') {
+                localStorage.setItem('adminToken', token);
+            } else {
+                localStorage.setItem('userToken', token);
+            }
+        } catch (e) {
+            // noop
+        }
     }
 
     // Clear authentication token
@@ -22,11 +35,13 @@ class APIService {
         const url = `${this.baseURL}${endpoint}`;
         const config = {
             headers: {
-                'Content-Type': 'application/json',
                 ...options.headers
             },
             ...options
         };
+        if (options.body && !config.headers['Content-Type']) {
+            config.headers['Content-Type'] = 'application/json';
+        }
 
         // Add authentication token if available
         if (this.token) {
@@ -84,6 +99,7 @@ class APIService {
         
         if (response.token) {
             this.setToken(response.token);
+            localStorage.setItem('adminToken', response.token);
         }
         
         return response;
@@ -160,6 +176,24 @@ class APIService {
     async markNotificationRead(notificationId) {
         return await this.makeRequest(`/notifications/${notificationId}/read`, {
             method: 'PUT'
+        });
+    }
+
+    async markAllNotificationsRead(userId) {
+        return await this.makeRequest(`/notifications/user/${userId}/read-all`, {
+            method: 'PUT'
+        });
+    }
+
+    async deleteNotification(notificationId) {
+        return await this.makeRequest(`/notifications/${notificationId}`, {
+            method: 'DELETE'
+        });
+    }
+
+    async clearAllNotifications(userId) {
+        return await this.makeRequest(`/notifications/user/${userId}`, {
+            method: 'DELETE'
         });
     }
 

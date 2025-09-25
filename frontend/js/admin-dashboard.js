@@ -248,12 +248,7 @@ class AdminDashboard {
             });
         }
         
-        // Show welcome message if skipped login
-        if (adminData.skipLogin) {
-            setTimeout(() => {
-                this.showToast('Welcome to Admin Dashboard! You skipped the login process.', 'success');
-            }, 1000);
-        }
+        // Remove skip-login messaging
     }
 
     startStatsUpdates() {
@@ -327,6 +322,26 @@ class AdminDashboard {
             modal.style.display = 'block';
             modal.classList.add('animate__animated', 'animate__fadeIn');
             document.body.style.overflow = 'hidden';
+            // Persist UI state
+            try { localStorage.setItem('adminUI_openModal', modalId); } catch (_) {}
+
+            // When opening Loan Management, load current data
+        if (modalId === 'loanManagementModal') {
+                // Skip: loan modal removed
+                return;
+            } else if (modalId === 'billsModal') {
+                loadBills('active');
+                loadBills('overdue');
+                loadBills('paid');
+                loadBills('history');
+                // Ensure first tab visible
+                switchBillsTab('active-bills');
+            } else if (modalId === 'overdueBooksModal') {
+                loadOverdueBooks();
+            } else if (modalId === 'reportsModal') {
+                // Populate reports & analytics with real data
+                loadReportsAnalytics();
+            }
         }
     }
 
@@ -336,6 +351,11 @@ class AdminDashboard {
         if (modal) {
             modal.classList.add('animate__animated', 'animate__fadeOut');
             document.body.style.overflow = '';
+            // Clear persisted state if same modal
+            try {
+                const saved = localStorage.getItem('adminUI_openModal');
+                if (saved === modalId) localStorage.removeItem('adminUI_openModal');
+            } catch (_) {}
             
             setTimeout(() => {
                 modal.style.display = 'none';
@@ -477,13 +497,24 @@ function showModal(modalId) {
 async function handleAddBookForm(e) {
     e.preventDefault();
     const formData = new FormData(e.target);
+    // Map UI fields to backend expectations
+    const title = (formData.get('title') || '').toString().trim();
+    const authors = (formData.get('author') || '').toString().trim();
+    const copies = parseInt(formData.get('copies') || '1', 10);
+    const category = (formData.get('category') || '').toString().trim();
+
+    if (!title || !authors) {
+        adminDashboard.showToast('Please provide both Title and Author.', 'error');
+        return;
+    }
+
     const bookData = {
-        title: formData.get('title'),
-        authors: formData.get('authors'),
-        publishers: formData.get('publishers'),
-        year: parseInt(formData.get('year')),
-        price: parseFloat(formData.get('price')),
-        stock: parseInt(formData.get('stock'))
+        title: title,
+        authors: authors,
+        publishers: category || null,
+        year: null,
+        price: 0,
+        stock: isNaN(copies) ? 1 : copies
     };
     
     try {
@@ -494,18 +525,24 @@ async function handleAddBookForm(e) {
         adminDashboard.updateStats();
     } catch (error) {
         console.error('Error adding book:', error);
-        adminDashboard.showToast('Failed to add book: ' + error.message, 'error');
+        adminDashboard.showToast('Failed to add book: ' + (error.message || 'Unknown error'), 'error');
     }
 }
 
-function switchTab(tabName) {
+function switchTab(tabName, btn) {
     // Remove active class from all tabs
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.remove('active');
     });
     
     // Add active class to clicked tab
-    event.target.classList.add('active');
+    if (btn) {
+        btn.classList.add('active');
+    } else {
+        // Try to find the matching button by its onclick attribute
+        const guessBtn = document.querySelector(`.loan-tabs .tab-btn[onclick*="${tabName}"]`);
+        if (guessBtn) guessBtn.classList.add('active');
+    }
     
     // Show corresponding content
     document.querySelectorAll('.tab-content').forEach(content => {
@@ -515,23 +552,218 @@ function switchTab(tabName) {
     const activeContent = document.getElementById(tabName);
     if (activeContent) {
         activeContent.style.display = 'block';
+        // Load data when switching tabs
+        // Loans containers removed; no-op
+
+        // Persist selected tab
+        try { localStorage.setItem('adminUI_loansActiveTab', tabName); } catch (_) {}
     }
 }
 
 function returnBook(loanId) {
     if (confirm('Are you sure you want to return this book?')) {
-        adminDashboard.showToast('Book returned successfully!', 'success');
-        // Update the table or refresh data
-        setTimeout(() => {
-            adminDashboard.updateStats();
-        }, 1000);
+        (async () => {
+            try {
+                await window.apiService.makeRequest(`/issues/${loanId}/return`, { method: 'PUT' });
+                adminDashboard.showToast('Book returned successfully!', 'success');
+                loadLoans('active');
+                adminDashboard.updateStats();
+            } catch (e) {
+                adminDashboard.showToast('Failed to return book: ' + (e.message || 'Unknown error'), 'error');
+            }
+        })();
     }
 }
 
 function renewBook(loanId) {
-    if (confirm('Are you sure you want to renew this book loan?')) {
-        adminDashboard.showToast('Book loan renewed successfully!', 'success');
+    adminDashboard.showToast('Renew API not implemented', 'info');
+}
+
+// Loans loader
+async function loadLoans(kind) {
+    try {
+        // We only have endpoints for user-specific issues; for admin view, use /api/test/data
+        const data = await window.apiService.makeRequest('/test/data');
+        let issues = Array.isArray(data.issues) ? data.issues : [];
+        let booksById = new Map((data.books || []).map(b => [b.book_id, b]));
+        let usersById = new Map((data.users || []).map(u => [u.user_id, u]));
+
+        // If no real data, fallback to mock
+        if (issues.length === 0) {
+            const mock = getMockLoansData();
+            issues = mock.issues;
+            booksById = new Map(mock.books.map(b => [b.book_id, b]));
+            usersById = new Map(mock.users.map(u => [u.user_id, u]));
+        }
+
+        const now = new Date();
+        const parseDate = (d) => {
+            if (!d) return null;
+            // Handle possible MySQL date strings like 'Wed, 24 Sep 2025 00:00:00 GMT'
+            const parsed = new Date(d);
+            if (!isNaN(parsed)) return parsed;
+            // Try YYYY-MM-DD
+            try {
+                const s = String(d).slice(0,10);
+                const iso = new Date(s);
+                return isNaN(iso) ? null : iso;
+            } catch (_) {
+                return null;
+            }
+        };
+        let filtered = issues;
+        if (kind === 'active') {
+            filtered = issues.filter(i => i.status === 'issued');
+        }
+        if (kind === 'overdue') {
+            filtered = issues.filter(i => i.status === 'overdue' || (i.status === 'issued' && (()=>{const dd=parseDate(i.due_date); return dd && dd < now;})()));
+        }
+        if (kind === 'history') {
+            filtered = issues.filter(i => i.status !== 'issued');
+        }
+
+        const containerId = kind === 'active' ? 'active-loans' : (kind === 'overdue' ? 'overdue-loans' : 'loan-history');
+        let tbody = document.querySelector(`#${containerId} tbody`);
+        if (!tbody) {
+            const table = document.querySelector(`#${containerId} table`);
+            if (table) {
+                tbody = document.createElement('tbody');
+                table.appendChild(tbody);
+            } else {
+                // Inject a minimal table if markup was not rendered yet
+                const container = document.getElementById(containerId);
+                if (container) {
+                    container.innerHTML = `
+                        <div class="loans-table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Book</th>
+                                        <th>Issue Date</th>
+                                        <th>Due Date</th>
+                                        ${kind === 'history' ? '<th>Status</th>' : '<th>Actions</th>'}
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>`;
+                    tbody = container.querySelector('tbody');
+                } else {
+                    console.warn('Loans container/table not found for', containerId);
+                    return;
+                }
+            }
+        }
+
+        if (filtered.length === 0) {
+            const colspan = kind === 'history' ? 5 : 5;
+            tbody.innerHTML = `<tr><td colspan="${colspan}">No records found.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = filtered.map(i => {
+            const user = usersById.get(i.user_id) || { name: `User #${i.user_id}` };
+            const book = booksById.get(i.book_id) || { title: `Book #${i.book_id}` };
+            if (kind === 'history') {
+                return `
+                    <tr>
+                        <td>${user.name || user.email || ('User #' + i.user_id)}</td>
+                        <td>${book.title}</td>
+                        <td>${(i.issue_date || '').toString().slice(0,10)}</td>
+                        <td>${(i.due_date || '').toString().slice(0,10)}</td>
+                        <td>${i.status}</td>
+                    </tr>
+                `;
+            } else {
+                const actions = i.status === 'issued' ? `
+                    <button class=\"btn btn-success btn-sm\" onclick=\"returnBook(${i.issue_id})\">Return</button>
+                ` : '';
+                return `
+                    <tr>
+                        <td>${user.name || user.email || ('User #' + i.user_id)}</td>
+                        <td>${book.title}</td>
+                        <td>${(i.issue_date || '').toString().slice(0,10)}</td>
+                        <td>${(i.due_date || '').toString().slice(0,10)}</td>
+                        <td>${actions}</td>
+                    </tr>
+                `;
+            }
+        }).join('');
+    } catch (e) {
+        console.error('Failed to load loans', e);
+        // Use mock data on failure
+        try {
+            const mock = getMockLoansData();
+            ['active','overdue','history'].forEach(kind => {
+                const containerId = kind === 'active' ? 'active-loans' : (kind === 'overdue' ? 'overdue-loans' : 'loan-history');
+                const tbody = document.querySelector(`#${containerId} tbody`);
+                if (!tbody) return;
+                const issues = mock.issues.filter(i => {
+                    if (kind === 'active') return i.status === 'issued';
+                    if (kind === 'overdue') return i.status === 'issued' && new Date(i.due_date) < new Date();
+                    return i.status !== 'issued';
+                });
+                const booksById = new Map(mock.books.map(b => [b.book_id, b]));
+                const usersById = new Map(mock.users.map(u => [u.user_id, u]));
+                tbody.innerHTML = issues.map(i => {
+                    const user = usersById.get(i.user_id) || { name: `User #${i.user_id}` };
+                    const book = booksById.get(i.book_id) || { title: `Book #${i.book_id}` };
+                    if (kind === 'history') {
+                        return `
+                            <tr>
+                                <td>${user.name}</td>
+                                <td>${book.title}</td>
+                                <td>${i.issue_date}</td>
+                                <td>${i.due_date}</td>
+                                <td>${i.status}</td>
+                            </tr>
+                        `;
+                    }
+                    return `
+                        <tr>
+                            <td>${user.name}</td>
+                            <td>${book.title}</td>
+                            <td>${i.issue_date}</td>
+                            <td>${i.due_date}</td>
+                            <td><button class=\"btn btn-success btn-sm\" disabled>Return</button></td>
+                        </tr>
+                    `;
+                }).join('');
+            });
+        } catch (_) {
+            ['active-loans','overdue-loans','loan-history'].forEach(id => {
+                const tb = document.querySelector(`#${id} tbody`);
+                if (tb) tb.innerHTML = '<tr><td colspan="5">Failed to load loans.</td></tr>';
+            });
+        }
     }
+}
+
+function getMockLoansData() {
+    // Simple deterministic mock set
+    const users = [
+        { user_id: 1, name: 'John Doe', email: 'john@example.com' },
+        { user_id: 2, name: 'Jane Smith', email: 'jane@example.com' },
+        { user_id: 3, name: 'Mike Johnson', email: 'mike@example.com' }
+    ];
+    const books = [
+        { book_id: 101, title: 'The Great Gatsby' },
+        { book_id: 102, title: '1984' },
+        { book_id: 103, title: 'To Kill a Mockingbird' }
+    ];
+    const today = new Date();
+    const fmt = (d) => d.toISOString().slice(0,10);
+    const twoWeeksAgo = new Date(today); twoWeeksAgo.setDate(today.getDate()-14);
+    const oneWeekAgo = new Date(today); oneWeekAgo.setDate(today.getDate()-7);
+    const yesterday = new Date(today); yesterday.setDate(today.getDate()-1);
+    const lastMonth = new Date(today); lastMonth.setDate(today.getDate()-30);
+    const issues = [
+        { issue_id: 5001, user_id: 1, book_id: 101, issue_date: fmt(oneWeekAgo), due_date: fmt(new Date(today.getFullYear(), today.getMonth(), today.getDate()+7)), status: 'issued' },
+        { issue_id: 5002, user_id: 2, book_id: 102, issue_date: fmt(twoWeeksAgo), due_date: fmt(yesterday), status: 'issued' },
+        { issue_id: 5003, user_id: 3, book_id: 103, issue_date: fmt(lastMonth), due_date: fmt(new Date(today.getFullYear(), today.getMonth(), today.getDate()-10)), return_date: fmt(yesterday), status: 'returned' }
+    ];
+    return { users, books, issues };
 }
 
 // User management functions
@@ -693,7 +925,193 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Add form validation
     setupFormValidation();
+
+    // Wire up report buttons if present
+    const libBtn = document.getElementById('generateLibraryStatsReportBtn');
+    if (libBtn) libBtn.addEventListener('click', () => generateReportCSV('library'));
+    const popBtn = document.getElementById('generatePopularBooksReportBtn');
+    if (popBtn) popBtn.addEventListener('click', () => generateReportCSV('popular'));
+    const userActBtn = document.getElementById('generateUserActivityReportBtn');
+    if (userActBtn) userActBtn.addEventListener('click', () => generateReportCSV('userActivity'));
+
+    // Preload loan tables so modal has data immediately after page load
+    try {
+        // Loans modal/containers removed; do not preload
+        // Preload bills so modal is never blank
+        loadBills('active');
+        loadBills('overdue');
+        loadBills('paid');
+        loadBills('history');
+    } catch (e) {
+        console.warn('Preload bills failed', e);
+    }
+
+    // Restore previously open modal and selected loans tab
+    try {
+        const openModal = localStorage.getItem('adminUI_openModal');
+        if (openModal) {
+            // Defer to ensure DOM is ready
+            setTimeout(() => {
+                showModal(openModal);
+                const rememberedTab = localStorage.getItem('adminUI_loansActiveTab');
+                if (openModal === 'loanManagementModal' && rememberedTab) {
+                    switchTab(rememberedTab);
+                }
+                if (openModal === 'billsModal') {
+                    const rememberedBillsTab = localStorage.getItem('adminUI_billsActiveTab');
+                    if (rememberedBillsTab) switchBillsTab(rememberedBillsTab);
+                }
+                if (openModal === 'overdueBooksModal') {
+                    loadOverdueBooks();
+                }
+            }, 0);
+        }
+    } catch (_) {}
 });
+
+// ---------------- Bills & Fines -----------------
+function switchBillsTab(tabName, btn) {
+    document.querySelectorAll('#billsModal .tab-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    document.querySelectorAll('#billsModal .tab-content').forEach(c => c.style.display = 'none');
+    const activeContent = document.getElementById(tabName);
+    if (activeContent) activeContent.style.display = 'block';
+    try { localStorage.setItem('adminUI_billsActiveTab', tabName); } catch (_) {}
+    if (tabName === 'active-bills') loadBills('active');
+    if (tabName === 'overdue-bills') loadBills('overdue');
+    if (tabName === 'paid-bills') loadBills('paid');
+    if (tabName === 'bills-history') loadBills('history');
+}
+
+async function loadBills(kind) {
+    try {
+        const data = await window.apiService.makeRequest('/test/data');
+        const issues = Array.isArray(data.issues) ? data.issues : [];
+        const booksById = new Map((data.books || []).map(b => [b.book_id, b]));
+        const usersById = new Map((data.users || []).map(u => [u.user_id, u]));
+        const now = new Date();
+        const parseDate = (d) => d ? new Date(d) : null;
+        // Normalize types for safe comparisons
+        const normalized = issues.map(i => ({
+            ...i,
+            fine_num: (i.fine == null ? 0 : Number(i.fine)),
+            fine_paid_bool: (i.fine_paid === 1 || i.fine_paid === true)
+        }));
+        let filtered = normalized;
+        if (kind === 'active') {
+            filtered = normalized.filter(i => (i.fine_num > 0 && !i.fine_paid_bool) || i.status === 'issued');
+        } else if (kind === 'overdue') {
+            filtered = normalized.filter(i => i.status === 'overdue' || (i.status === 'issued' && (()=>{const dd=parseDate(i.due_date); return dd && dd < now;})()));
+        } else if (kind === 'paid') {
+            filtered = normalized.filter(i => Number(i.fine_num) > 0 && i.fine_paid_bool);
+        } else if (kind === 'history') {
+            filtered = normalized.filter(i => i.status === 'returned' || Number(i.fine_num) > 0);
+        }
+
+        const containerId = kind === 'active' ? 'active-bills' : (kind === 'overdue' ? 'overdue-bills' : (kind === 'paid' ? 'paid-bills' : 'bills-history'));
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        // Rebuild the table markup to avoid stale/missing tbody issues
+        container.innerHTML = `
+            <div class="loans-table">
+                <div class="table-meta" style="margin:8px 0; opacity:0.9; font-size:0.9rem;">
+                    <span class="bill-count">Loading...</span>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Book</th>
+                            <th>Issue Date</th>
+                            <th>Due Date</th>
+                            ${kind === 'history' ? '<th>Status</th>' : ''}
+                            <th>Fine</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>`;
+        let tbody = container.querySelector('tbody');
+        if (tbody) {
+            tbody.innerHTML = '<tr><td colspan="6">Loading...</td></tr>';
+        }
+
+        // Update count/meta
+        const countEl = container.querySelector('.bill-count');
+        if (countEl) countEl.textContent = `${filtered.length} record${filtered.length===1?'':'s'}`;
+
+        if (!filtered.length) {
+            tbody.innerHTML = `<tr><td colspan="${kind==='history'?6:5}">No records found.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = filtered.map(i => {
+            const user = usersById.get(i.user_id) || { name: `User #${i.user_id}` };
+            const book = booksById.get(i.book_id) || { title: `Book #${i.book_id}` };
+            // Normalize date strings
+            const issueDate = i.issue_date ? new Date(i.issue_date) : null;
+            const dueDate = i.due_date ? new Date(i.due_date) : null;
+            const fmt = (d) => d ? d.toISOString().slice(0,10) : '';
+            // MySQL connector may return fine as string; normalize
+            const fine = Number(i.fine != null ? i.fine : i.fine_num || 0).toFixed(2);
+            const base = `
+                <td>${user.name || user.email || ('User #' + i.user_id)}</td>
+                <td>${book.title}</td>
+                <td>${fmt(issueDate)}</td>
+                <td>${fmt(dueDate)}</td>`;
+            if (kind === 'history') {
+                return `<tr>${base}<td>${i.status}</td><td>${fine}</td></tr>`;
+            }
+            return `<tr>${base}<td>${fine}</td></tr>`;
+        }).join('');
+    } catch (e) {
+        console.error('Failed to load bills', e);
+        ['active-bills','overdue-bills','paid-bills','bills-history'].forEach(id => {
+            const tb = document.querySelector(`#${id} tbody`);
+            if (tb) tb.innerHTML = '<tr><td colspan="6">Failed to load bills.</td></tr>';
+        });
+    }
+}
+
+async function loadOverdueBooks() {
+    try {
+        const data = await window.apiService.makeRequest('/test/data');
+        const issues = Array.isArray(data.issues) ? data.issues : [];
+        const booksById = new Map((data.books || []).map(b => [b.book_id, b]));
+        const usersById = new Map((data.users || []).map(u => [u.user_id, u]));
+        const now = new Date();
+        const parseDate = (d) => d ? new Date(d) : null;
+        const overdue = issues.filter(i => i.status === 'overdue' || (i.status === 'issued' && (()=>{const dd=parseDate(i.due_date); return dd && dd < now;})()));
+
+        const tbody = document.getElementById('overdueBooksTableBody');
+        if (!tbody) return;
+        if (!overdue.length) {
+            tbody.innerHTML = '<tr><td colspan="6">No overdue books found.</td></tr>';
+            return;
+        }
+        tbody.innerHTML = overdue.map(i => {
+            const user = usersById.get(i.user_id) || { name: `User #${i.user_id}` };
+            const book = booksById.get(i.book_id) || { title: `Book #${i.book_id}` };
+            const due = parseDate(i.due_date);
+            const days = due ? Math.max(0, Math.ceil((now - due) / (1000*60*60*24))) : 0;
+            const fine = (i.fine != null) ? Number(i.fine).toFixed(2) : '0.00';
+            return `
+                <tr>
+                    <td>${user.name || user.email || ('User #' + i.user_id)}</td>
+                    <td>${book.title}</td>
+                    <td>${(i.issue_date || '').toString().slice(0,10)}</td>
+                    <td>${(i.due_date || '').toString().slice(0,10)}</td>
+                    <td>${days}</td>
+                    <td>${fine}</td>
+                </tr>
+            `;
+        }).join('');
+    } catch (e) {
+        console.error('Failed to load overdue books', e);
+        const tbody = document.getElementById('overdueBooksTableBody');
+        if (tbody) tbody.innerHTML = '<tr><td colspan="6">Failed to load overdue books.</td></tr>';
+    }
+}
 
 // Settings functionality
 let settingsData = {
@@ -738,7 +1156,7 @@ function switchSettingsTab(tabName) {
     
     // Add active class to clicked tab
     const clickedTab = event.target;
-    clickedTab.classList.add('active');
+    if (clickedTab && clickedTab.classList) clickedTab.classList.add('active');
     
     // Show corresponding content
     document.querySelectorAll('#settingsModal .tab-content').forEach(content => {
@@ -1150,3 +1568,131 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// ---------------- Reports & Analytics -----------------
+async function loadReportsAnalytics() {
+    try {
+        // Stats from protected admin endpoint
+        const { stats } = await window.apiService.getAdminStats();
+        const totalBooksEl = document.getElementById('libTotalBooks');
+        const activeUsersEl = document.getElementById('libActiveUsers');
+        const booksOnLoanEl = document.getElementById('libBooksOnLoan');
+        const overdueBooksEl = document.getElementById('libOverdueBooks');
+        if (totalBooksEl) totalBooksEl.textContent = (stats.total_books ?? '-').toLocaleString();
+        if (activeUsersEl) activeUsersEl.textContent = (stats.total_users ?? '-').toLocaleString();
+        if (booksOnLoanEl) booksOnLoanEl.textContent = (stats.active_issues ?? '-').toLocaleString();
+        if (overdueBooksEl) overdueBooksEl.textContent = (stats.overdue_books ?? '-').toLocaleString();
+
+        // For popular books and user activity, leverage /api/test/data for now
+        const testData = await window.apiService.makeRequest('/test/data');
+        const issues = Array.isArray(testData.issues) ? testData.issues : [];
+        const books = Array.isArray(testData.books) ? testData.books : [];
+        const users = Array.isArray(testData.users) ? testData.users : [];
+
+        // Popular books by loans this month
+        const now = new Date();
+        const month = now.getMonth();
+        const year = now.getFullYear();
+        const monthlyIssued = issues.filter(i => i.status && i.issue_date && new Date(i.issue_date).getMonth() === month && new Date(i.issue_date).getFullYear() === year);
+        const counts = new Map();
+        monthlyIssued.forEach(i => counts.set(i.book_id, (counts.get(i.book_id) || 0) + 1));
+        const top = [...counts.entries()].sort((a,b)=>b[1]-a[1]).slice(0,5);
+        const bookById = new Map(books.map(b=>[b.book_id, b]));
+        const popularUl = document.getElementById('popularBooksList');
+        if (popularUl) {
+            popularUl.innerHTML = top.length ? top.map(([bookId, cnt]) => {
+                const title = (bookById.get(bookId)?.title) || `Book #${bookId}`;
+                return `<li>${title} - ${cnt} loans</li>`;
+            }).join('') : '<li>No data</li>';
+        }
+
+        // User activity
+        const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate()-7);
+        const newRegs = users.filter(u => u.created_at ? new Date(u.created_at) >= weekAgo : false).length;
+        const activeBorrowers = new Set(issues.filter(i => i.status === 'issued').map(i => i.user_id)).size;
+        const durations = issues.map(i => {
+            const start = i.issue_date ? new Date(i.issue_date) : null;
+            const end = i.return_date ? new Date(i.return_date) : new Date();
+            return start ? Math.max(1, Math.round((end - start)/(1000*60*60*24))) : null;
+        }).filter(Boolean);
+        const avgDays = durations.length ? Math.round(durations.reduce((a,b)=>a+b,0)/durations.length) : 0;
+        const newRegsEl = document.getElementById('newRegistrations');
+        const actBorrowersEl = document.getElementById('activeBorrowers');
+        const avgLoanDaysEl = document.getElementById('avgLoanDays');
+        if (newRegsEl) newRegsEl.textContent = newRegs.toString();
+        if (actBorrowersEl) actBorrowersEl.textContent = activeBorrowers.toString();
+        if (avgLoanDaysEl) avgLoanDaysEl.textContent = avgDays.toString();
+    } catch (e) {
+        console.error('Failed to load reports analytics', e);
+        adminDashboard.showToast('Failed to load reports data', 'error');
+    }
+}
+
+function toCSV(rows) {
+    if (!rows || !rows.length) return '';
+    const headers = Object.keys(rows[0]);
+    const escape = (v) => ('"' + String(v ?? '').replace(/"/g,'""') + '"');
+    const lines = [headers.join(',')];
+    rows.forEach(r => lines.push(headers.map(h => escape(r[h])).join(',')));
+    return lines.join('\n');
+}
+
+async function generateReportCSV(type) {
+    try {
+        if (type === 'library') {
+            const { stats } = await window.apiService.getAdminStats();
+            const rows = [
+                { metric: 'Total Books', value: stats.total_books },
+                { metric: 'Active Users', value: stats.total_users },
+                { metric: 'Books on Loan', value: stats.active_issues },
+                { metric: 'Overdue Books', value: stats.overdue_books },
+                { metric: 'Total Fines', value: stats.total_fines }
+            ];
+            downloadCSV('library_statistics.csv', toCSV(rows));
+        } else if (type === 'popular') {
+            const data = await window.apiService.makeRequest('/test/data');
+            const issues = data.issues || [];
+            const books = new Map((data.books||[]).map(b=>[b.book_id,b]));
+            const counts = new Map();
+            issues.forEach(i=>counts.set(i.book_id,(counts.get(i.book_id)||0)+1));
+            const rows = [...counts.entries()].sort((a,b)=>b[1]-a[1]).slice(0,50).map(([bookId,cnt])=>({
+                book_id: bookId,
+                title: (books.get(bookId)?.title)||`Book #${bookId}`,
+                total_loans: cnt
+            }));
+            downloadCSV('popular_books.csv', toCSV(rows));
+        } else if (type === 'userActivity') {
+            const data = await window.apiService.makeRequest('/test/data');
+            const issues = data.issues || [];
+            const users = new Map((data.users||[]).map(u=>[u.user_id,u]));
+            const rows = issues.map(i=>({
+                issue_id: i.issue_id,
+                user_id: i.user_id,
+                user_name: users.get(i.user_id)?.name || '',
+                book_id: i.book_id,
+                status: i.status,
+                issue_date: i.issue_date,
+                due_date: i.due_date,
+                return_date: i.return_date || ''
+            }));
+            downloadCSV('user_activity.csv', toCSV(rows));
+        }
+        adminDashboard.showToast('Report generated', 'success');
+    } catch (e) {
+        console.error('Failed generating report', e);
+        adminDashboard.showToast('Failed to generate report', 'error');
+    }
+}
+
+function downloadCSV(filename, csv) {
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', filename);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+}

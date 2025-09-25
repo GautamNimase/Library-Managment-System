@@ -51,15 +51,15 @@
                     </p>
                     <div class="hero-stats">
                         <div class="stat-item">
-                            <span class="stat-number" data-target="12500">0</span>
+                            <span class="stat-number" data-target="0" id="booksHeroTotalBooks">0</span>
                             <span class="stat-label">Books Available</span>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-number" data-target="150">0</span>
+                            <span class="stat-number" data-target="0" id="booksHeroTotalCategories">0</span>
                             <span class="stat-label">Categories</span>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-number" data-target="50000">0</span>
+                            <span class="stat-number" data-target="0" id="booksHeroTotalUsers">0</span>
                             <span class="stat-label">Happy Readers</span>
                         </div>
                     </div>
@@ -279,6 +279,20 @@
         </div>
     </div>
 
+    <!-- Preview Modal -->
+    <div class="modal-overlay" id="previewModal">
+        <div class="modal-content large-modal">
+            <button class="modal-close" id="closePreviewModal" onclick="closePreview()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-body">
+                <h2 style="margin-bottom:12px">Book Preview</h2>
+                <div id="previewUnavailable" style="display:none; padding:12px 0">No preview available for this book.</div>
+                <iframe id="previewFrame" src="" style="width:100%; height:70vh; border:0; display:none"></iframe>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
@@ -325,6 +339,7 @@
         </div>
     </footer>
 
+    <script src="js/api-service.js"></script>
     <script src="js/books.js?v=20241227"></script>
 </body>
 </html>
