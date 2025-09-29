@@ -584,6 +584,88 @@ app.get('/api/admin/users', verifyToken, (req, res) => {
     res.json({ users: sanitized });
 });
 
+// Admin create user
+app.post('/api/admin/users', verifyToken, (req, res) => {
+    if (req.user.role !== 'admin') {
+        return res.status(403).json({ message: 'Admin privileges required' });
+    }
+    const { name, email, password = 'password', phone, is_active = true } = req.body || {};
+    if (!name || !email) {
+        return res.status(400).json({ message: 'Name and email are required' });
+    }
+    if (users.find(u => u.email === email)) {
+        return res.status(409).json({ message: 'User with this email already exists' });
+    }
+    bcrypt.hash(password, 10).then(hashed => {
+        const newUser = {
+            user_id: users.length ? Math.max(...users.map(u => u.user_id)) + 1 : 1,
+            name,
+            email,
+            password: hashed,
+            phone: phone || null,
+            created_at: new Date(),
+            is_active: !!is_active
+        };
+        users.push(newUser);
+        res.status(201).json({
+            message: 'User created successfully',
+            user: { user_id: newUser.user_id, name: newUser.name, email: newUser.email, phone: newUser.phone, is_active: newUser.is_active, created_at: newUser.created_at }
+        });
+    }).catch(err => res.status(500).json({ message: err.message }));
+});
+
+// Admin update user
+app.put('/api/admin/users/:userId', verifyToken, (req, res) => {
+    if (req.user.role !== 'admin') {
+        return res.status(403).json({ message: 'Admin privileges required' });
+    }
+    const userId = parseInt(req.params.userId);
+    const user = users.find(u => u.user_id === userId);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    const { name, email, phone, is_active } = req.body || {};
+    if (name !== undefined) user.name = name;
+    if (email !== undefined) user.email = email;
+    if (phone !== undefined) user.phone = phone;
+    if (is_active !== undefined) user.is_active = !!is_active;
+    res.json({ message: 'User updated successfully', user: { user_id: user.user_id, name: user.name, email: user.email, phone: user.phone, is_active: user.is_active, created_at: user.created_at } });
+});
+
+// Admin delete user
+app.delete('/api/admin/users/:userId', verifyToken, (req, res) => {
+    if (req.user.role !== 'admin') {
+        return res.status(403).json({ message: 'Admin privileges required' });
+    }
+    const userId = parseInt(req.params.userId);
+    const idx = users.findIndex(u => u.user_id === userId);
+    if (idx === -1) return res.status(404).json({ message: 'User not found' });
+    users.splice(idx, 1);
+    res.json({ message: 'User deleted successfully' });
+});
+
+// Admin add book
+app.post('/api/admin/books', verifyToken, (req, res) => {
+    if (req.user.role !== 'admin') {
+        return res.status(403).json({ message: 'Admin privileges required' });
+    }
+    const { title, authors, publishers = null, year = null, price = 0, stock = 1 } = req.body || {};
+    if (!title || !authors) {
+        return res.status(400).json({ message: 'Title and authors are required' });
+    }
+    const newBook = {
+        book_id: books.length ? Math.max(...books.map(b => b.book_id)) + 1 : 1,
+        title,
+        authors,
+        publishers,
+        year,
+        price: Number(price) || 0,
+        stock: Number(stock) || 0,
+        created_at: new Date(),
+        is_available: (Number(stock) || 0) > 0
+    };
+    books.push(newBook);
+    res.status(201).json({ message: 'Book added successfully', book: newBook });
+});
+
 // Health check
 app.get('/api/health', (req, res) => {
     res.json({ 
