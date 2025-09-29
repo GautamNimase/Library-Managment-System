@@ -546,6 +546,29 @@ app.get('/api/health', (req, res) => {
     });
 });
 
+// Test data and stats for homepage
+app.get('/api/test/data', (req, res) => {
+    try {
+        const stats = {
+            total_books: books.length,
+            total_categories: 0, // categories not modeled in mock
+            total_users: users.length,
+            total_issues: issues.length,
+            total_admins: admins.length
+        };
+
+        res.json({
+            books,
+            users,
+            issues,
+            admins,
+            stats
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 // Start server
 app.listen(PORT, () => {
     console.log(`🚀 Library Management System API running on http://localhost:${PORT}`);

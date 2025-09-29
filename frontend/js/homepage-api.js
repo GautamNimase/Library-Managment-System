@@ -6,12 +6,18 @@ class HomepageAPI {
 
     async makeRequest(endpoint, options = {}) {
         try {
+            const method = (options.method || 'GET').toUpperCase();
+
+            // Build headers conditionally to avoid triggering preflight for simple GET
+            const headers = { ...(options.headers || {}) };
+            if (method !== 'GET' && !headers['Content-Type']) {
+                headers['Content-Type'] = 'application/json';
+            }
+
             const response = await fetch(`${this.baseURL}${endpoint}`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    ...options.headers
-                },
-                ...options
+                ...options,
+                method,
+                headers
             });
 
             if (!response.ok) {
