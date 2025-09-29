@@ -792,23 +792,23 @@ function showAddUserModal() {
 }
 
 function editUser(userId) {
-    const user = usersData.find(u => u.id === userId);
+    const user = usersData.find(u => (u.user_id ?? u.id) === userId);
     if (!user) return;
     
     document.getElementById('userModalTitle').textContent = 'Edit User';
     document.getElementById('userSubmitBtn').textContent = 'Update User';
-    document.getElementById('userId').value = user.id;
-    document.getElementById('userName').value = user.name;
-    document.getElementById('userEmail').value = user.email;
-    document.getElementById('userRole').value = user.role;
-    document.getElementById('userStatus').value = user.status;
+    document.getElementById('userId').value = (user.user_id ?? user.id) || '';
+    document.getElementById('userName').value = user.name || '';
+    document.getElementById('userEmail').value = user.email || '';
+    document.getElementById('userRole').value = (user.role || 'user');
+    document.getElementById('userStatus').value = (user.status || (user.is_active === false ? 'inactive' : 'active'));
     document.getElementById('userPassword').value = '******'; // Placeholder
     
     adminDashboard.showModal('addUserModal');
 }
 
 async function deleteUser(userId) {
-    const user = usersData.find(u => u.id === userId);
+    const user = usersData.find(u => (u.user_id ?? u.id) === userId);
     if (!user) return;
     
     if (confirm(`Are you sure you want to delete user "${user.name}"? This action cannot be undone.`)) {
@@ -824,17 +824,20 @@ async function deleteUser(userId) {
 }
 
 function viewUserDetails(userId) {
-    const user = usersData.find(u => u.id === userId);
+    const user = usersData.find(u => (u.user_id ?? u.id) === userId);
     if (!user) return;
     
-    document.getElementById('detailUserName').textContent = user.name;
-    document.getElementById('detailUserEmail').textContent = user.email;
-    document.getElementById('detailUserRole').textContent = user.role.charAt(0).toUpperCase() + user.role.slice(1);
-    document.getElementById('detailUserStatus').textContent = user.status.charAt(0).toUpperCase() + user.status.slice(1);
-    document.getElementById('detailUserJoinDate').textContent = `Joined: ${user.joinDate}`;
-    document.getElementById('booksBorrowed').textContent = user.booksBorrowed;
-    document.getElementById('currentLoans').textContent = user.currentLoans;
-    document.getElementById('overdueBooks').textContent = user.overdueBooks;
+    const role = (user.role || 'user');
+    const status = (user.status || (user.is_active === false ? 'inactive' : 'active'));
+    const joinDate = user.joinDate || (user.created_at ? new Date(user.created_at).toISOString().slice(0,10) : '');
+    document.getElementById('detailUserName').textContent = user.name || '';
+    document.getElementById('detailUserEmail').textContent = user.email || '';
+    document.getElementById('detailUserRole').textContent = role.charAt(0).toUpperCase() + role.slice(1);
+    document.getElementById('detailUserStatus').textContent = status.charAt(0).toUpperCase() + status.slice(1);
+    document.getElementById('detailUserJoinDate').textContent = `Joined: ${joinDate}`;
+    document.getElementById('booksBorrowed').textContent = String(user.booksBorrowed ?? 0);
+    document.getElementById('currentLoans').textContent = String(user.currentLoans ?? 0);
+    document.getElementById('overdueBooks').textContent = String(user.overdueBooks ?? 0);
     
     adminDashboard.showModal('userDetailsModal');
 }
