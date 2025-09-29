@@ -3,8 +3,8 @@ class APIService {
     constructor() {
         // Use deployed backend by default
         this.baseURL = 'https://library-system-js3a.onrender.com/api';
-        // Prefer user token for user-facing pages
-        this.token = localStorage.getItem('userToken') || localStorage.getItem('adminToken') || localStorage.getItem('authToken');
+        // Prefer admin token first for admin pages
+        this.token = localStorage.getItem('adminToken') || localStorage.getItem('userToken') || localStorage.getItem('authToken');
     }
 
     // Set authentication token
@@ -35,6 +35,7 @@ class APIService {
         const url = `${this.baseURL}${endpoint}`;
         const config = {
             headers: {
+                Accept: 'application/json',
                 ...options.headers
             },
             ...options
@@ -50,12 +51,15 @@ class APIService {
 
         try {
             const response = await fetch(url, config);
+            const contentType = response.headers.get('content-type') || '';
+            if (!contentType.includes('application/json')) {
+                const text = await response.text();
+                throw new Error(response.ok ? 'Unexpected response type' : `HTTP ${response.status}: ${text.slice(0,120)}`);
+            }
             const data = await response.json();
-
             if (!response.ok) {
                 throw new Error(data.message || 'Request failed');
             }
-
             return data;
         } catch (error) {
             console.error('API Request failed:', error);
