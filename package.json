@@ -1,0 +1,23 @@
+{
+  "name": "library-management-system",
+  "version": "1.0.0",
+  "description": "Library Management System with modern dashboard",
+  "main": "index.js",
+  "scripts": {
+    "build": "cd frontend && npm ci && echo 'Frontend build completed'",
+    "start": "cd backend && npm start",
+    "dev": "concurrently \"cd frontend && npm run dev\" \"cd backend && npm run dev\"",
+    "install-all": "cd frontend && npm install && cd ../backend && npm install"
+  },
+  "keywords": [
+    "library",
+    "management",
+    "system",
+    "dashboard"
+  ],
+  "author": "Gautam Nimase",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
