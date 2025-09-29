@@ -1,7 +1,7 @@
 // Homepage API Service for Real Data
 class HomepageAPI {
     constructor() {
-        this.baseURL = 'http://localhost:5000/api';
+        this.baseURL = 'https://library-system-js3a.onrender.com/api';
     }
 
     async makeRequest(endpoint, options = {}) {

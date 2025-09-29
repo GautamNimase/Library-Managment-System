@@ -158,11 +158,7 @@ function displayUserIssues() {
 // Load user notifications
 async function loadUserNotifications() {
     try {
-        const response = await fetch(`http://localhost:5000/api/notifications/user/${currentUser.user_id}`, {
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('userToken')}`
-            }
-        });
+        const response = await window.apiService.makeRequest(`/notifications/user/${currentUser.user_id}`);
         
         if (response.ok) {
             const data = await response.json();
@@ -243,22 +239,11 @@ function animateNumber(element, start, end) {
 // Return a book
 async function returnBook(issueId) {
     try {
-        const response = await fetch(`http://localhost:5000/api/issues/${issueId}/return`, {
-            method: 'PUT',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('userToken')}`
-            }
-        });
-        
-        if (response.ok) {
-            showNotification('Book returned successfully!', 'success');
-            // Reload issues
-            await loadUserIssues();
-            updateStats();
-        } else {
-            const data = await response.json();
-            showNotification(data.message || 'Failed to return book', 'error');
-        }
+        const response = await window.apiService.makeRequest(`/issues/${issueId}/return`, { method: 'PUT' });
+        showNotification('Book returned successfully!', 'success');
+        // Reload issues
+        await loadUserIssues();
+        updateStats();
     } catch (error) {
         console.error('Error returning book:', error);
         showNotification('Failed to return book. Please try again.', 'error');

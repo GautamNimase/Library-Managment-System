@@ -1,8 +1,8 @@
 // API Service for Library Management System
 class APIService {
     constructor() {
-        const host = window.location.hostname || 'localhost';
-        this.baseURL = `http://${host}:5000/api`;
+        // Use deployed backend by default
+        this.baseURL = 'https://library-system-js3a.onrender.com/api';
         // Prefer user token for user-facing pages
         this.token = localStorage.getItem('userToken') || localStorage.getItem('adminToken') || localStorage.getItem('authToken');
     }

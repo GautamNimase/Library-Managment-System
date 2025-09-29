@@ -197,7 +197,7 @@ async function loginUser(formData) {
     try {
         setLoadingState(true);
         
-        const response = await apiCall('http://192.168.97.217:5000/api/auth/login', {
+        const response = await apiCall('https://library-system-js3a.onrender.com/api/auth/login', {
             method: 'POST',
             body: JSON.stringify(formData)
         });
@@ -227,7 +227,7 @@ async function registerUser(formData) {
         
         console.log('Attempting registration with data:', formData);
         
-        const response = await apiCall('http://192.168.97.217:5000/api/auth/register', {
+        const response = await apiCall('https://library-system-js3a.onrender.com/api/auth/register', {
             method: 'POST',
             body: JSON.stringify(formData)
         });
@@ -266,7 +266,7 @@ async function adminRegister(formData) {
     try {
         setLoadingState(true);
         
-        const response = await apiCall('http://192.168.97.217:5000/api/auth/admin/register', {
+        const response = await apiCall('https://library-system-js3a.onrender.com/api/auth/admin/register', {
             method: 'POST',
             body: JSON.stringify(formData)
         });
@@ -294,7 +294,7 @@ async function adminLogin(formData) {
     try {
         setLoadingState(true);
         
-        const response = await apiCall('http://192.168.97.217:5000/api/auth/admin/login', {
+        const response = await apiCall('https://library-system-js3a.onrender.com/api/auth/admin/login', {
             method: 'POST',
             body: JSON.stringify(formData)
         });
