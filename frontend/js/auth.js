@@ -3,16 +3,15 @@
 // Toggle password visibility
 function togglePassword(inputId = 'password') {
     const passwordInput = document.getElementById(inputId);
-    const toggleBtn = passwordInput.parentElement.querySelector('.password-toggle i');
-    
+    if (!passwordInput) return;
+    const group = passwordInput.parentElement || document;
+    const toggleBtn = group.querySelector('.password-toggle');
     if (passwordInput.type === 'password') {
         passwordInput.type = 'text';
-        toggleBtn.classList.remove('fa-eye');
-        toggleBtn.classList.add('fa-eye-slash');
+        if (toggleBtn) { toggleBtn.classList.remove('fa-eye'); toggleBtn.classList.add('fa-eye-slash'); }
     } else {
         passwordInput.type = 'password';
-        toggleBtn.classList.remove('fa-eye-slash');
-        toggleBtn.classList.add('fa-eye');
+        if (toggleBtn) { toggleBtn.classList.remove('fa-eye-slash'); toggleBtn.classList.add('fa-eye'); }
     }
 }
 
