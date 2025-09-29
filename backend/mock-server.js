@@ -377,6 +377,22 @@ app.get('/api/books/search', (req, res) => {
     res.json({ books: booksWithAvailability });
 });
 
+// Current user profile
+app.get('/api/user/me', verifyToken, (req, res) => {
+    try {
+        if (req.user.role === 'admin') {
+            const admin = admins.find(a => a.admin_id === req.user.admin_id || a.email === req.user.email);
+            if (!admin) return res.status(404).json({ message: 'Admin not found' });
+            return res.json({ user: { name: admin.name, email: admin.email, role: 'admin' } });
+        }
+        const user = users.find(u => u.user_id === req.user.user_id || u.email === req.user.email);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        return res.json({ user: { user_id: user.user_id, name: user.name, email: user.email, phone: user.phone, role: 'user', created_at: user.created_at } });
+    } catch (e) {
+        res.status(500).json({ message: e.message });
+    }
+});
+
 // Issues Routes
 app.post('/api/issues', verifyToken, (req, res) => {
     try {
@@ -442,6 +458,28 @@ app.get('/api/issues/user/:userId', verifyToken, (req, res) => {
         });
     
     res.json({ issues: userIssues });
+});
+
+// Return issued book
+app.put('/api/issues/:issueId/return', verifyToken, (req, res) => {
+    try {
+        const issueId = parseInt(req.params.issueId);
+        const issue = issues.find(i => i.issue_id === issueId);
+        if (!issue) return res.status(404).json({ message: 'Issue not found' });
+        if (issue.user_id !== req.user.user_id && req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'Access denied' });
+        }
+        if (issue.status === 'returned') {
+            return res.json({ message: 'Already returned', issue_id: issue.issue_id });
+        }
+        issue.status = 'returned';
+        issue.return_date = new Date().toISOString().split('T')[0];
+        const book = books.find(b => b.book_id === issue.book_id);
+        if (book) { book.stock = (book.stock || 0) + 1; }
+        return res.json({ message: 'Book returned successfully', issue_id: issue.issue_id });
+    } catch (e) {
+        res.status(500).json({ message: e.message });
+    }
 });
 
 // Feedback Routes
@@ -535,6 +573,15 @@ app.get('/api/admin/stats', verifyToken, (req, res) => {
     };
     
     res.json({ stats });
+});
+
+// Admin users list
+app.get('/api/admin/users', verifyToken, (req, res) => {
+    if (req.user.role !== 'admin') {
+        return res.status(403).json({ message: 'Admin privileges required' });
+    }
+    const sanitized = users.map(u => ({ user_id: u.user_id, name: u.name, email: u.email, phone: u.phone, created_at: u.created_at, is_active: u.is_active }));
+    res.json({ users: sanitized });
 });
 
 // Health check
