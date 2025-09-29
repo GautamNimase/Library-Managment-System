@@ -843,21 +843,31 @@ function updateUsersTable() {
     const tbody = document.getElementById('usersTableBody');
     if (!tbody) return;
     
-    tbody.innerHTML = usersData.map(user => `
-        <tr data-user-id="${user.id}">
-            <td>#${user.id.toString().padStart(3, '0')}</td>
-            <td>${user.name}</td>
-            <td>${user.email}</td>
-            <td>${user.role.charAt(0).toUpperCase() + user.role.slice(1)}</td>
-            <td><span class="status-badge ${user.status}">${user.status.charAt(0).toUpperCase() + user.status.slice(1)}</span></td>
-            <td>${user.joinDate}</td>
+    tbody.innerHTML = usersData.map(user => {
+        const id = (user.user_id ?? user.id ?? 0);
+        const name = user.name || '';
+        const email = user.email || '';
+        const role = (user.role || 'user');
+        const status = (user.status || (user.is_active === false ? 'inactive' : 'active'));
+        const joinDate = user.joinDate || (user.created_at ? new Date(user.created_at).toISOString().slice(0,10) : '');
+        const idDisplay = String(id).padStart(3, '0');
+        const roleDisplay = role.charAt(0).toUpperCase() + role.slice(1);
+        const statusDisplay = status.charAt(0).toUpperCase() + status.slice(1);
+        return `
+        <tr data-user-id="${id}">
+            <td>#${idDisplay}</td>
+            <td>${name}</td>
+            <td>${email}</td>
+            <td>${roleDisplay}</td>
+            <td><span class="status-badge ${status}">${statusDisplay}</span></td>
+            <td>${joinDate}</td>
             <td>
-                <button class="btn-icon" title="Edit" onclick="editUser(${user.id})"><i class="fas fa-edit"></i></button>
-                <button class="btn-icon" title="Delete" onclick="deleteUser(${user.id})"><i class="fas fa-trash"></i></button>
-                <button class="btn-icon" title="View Details" onclick="viewUserDetails(${user.id})"><i class="fas fa-eye"></i></button>
+                <button class="btn-icon" title="Edit" onclick="editUser(${id})"><i class="fas fa-edit"></i></button>
+                <button class="btn-icon" title="Delete" onclick="deleteUser(${id})"><i class="fas fa-trash"></i></button>
+                <button class="btn-icon" title="View Details" onclick="viewUserDetails(${id})"><i class="fas fa-eye"></i></button>
             </td>
-        </tr>
-    `).join('');
+        </tr>`;
+    }).join('');
 }
 
 async function handleUserForm(e) {
